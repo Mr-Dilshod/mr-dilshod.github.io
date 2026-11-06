@@ -39,7 +39,7 @@ document.getElementById("nojs").remove();
 
 /* ---------- sound effects ---------- */
 var AC = null;
-function beep(f, ms, at) { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var t = AC.currentTime + (at || 0), o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.09, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + ms / 1000); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + ms / 1000 + .02); } catch (e) {} }
+function beep(f, ms, at) { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state !== "running" && AC.resume) AC.resume(); var t = AC.currentTime + (at || 0), o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.09, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + ms / 1000); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + ms / 1000 + .02); } catch (e) {} }
 function good() { beep(659, 120); beep(988, 220, .1); }
 function miss() { beep(220, 140); }
 function fanfare() { [523, 659, 784, 1047].forEach(function (f, i) { beep(f, 260, i * .12); }); }
@@ -55,10 +55,21 @@ function stopVoice() { try { player.pause(); } catch (e) {} if (curBtn) paint(cu
 function paint(b, on) { b.querySelector(".pl").innerHTML = on ? "&#10074;&#10074;" : "&#9654;"; b.classList.toggle("playing", on); }
 player.addEventListener("timeupdate", function () { if (curBtn && player.duration) curBtn.querySelector(".tr i").style.width = (player.currentTime / player.duration * 100) + "%"; });
 player.addEventListener("ended", function () { if (curBtn) { paint(curBtn, false); curBtn.querySelector(".tr i").style.width = "100%"; } curBtn = null; });
+/* iPhones play long sounds from a blob more reliably than from a data: address; the saved file keeps the data */
+var soundUrls = {};
+function soundUrl(d) {
+  if (!d || d.slice(0, 5) !== "data:") return d;
+  if (soundUrls[d]) return soundUrls[d];
+  try {
+    var c = d.indexOf(","), head = d.slice(5, c), bin = atob(d.slice(c + 1)), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return soundUrls[d] = URL.createObjectURL(new Blob([arr], { type: head.split(";")[0] }));
+  } catch (e) { return d; }
+}
 function pauseAudios(except) { Array.prototype.forEach.call(document.querySelectorAll("audio"), function (a) { if (a !== except) { try { a.pause(); } catch (e) {} } }); }
 document.addEventListener("play", function (e) { if (e.target && e.target.tagName === "AUDIO") { stopVoice(); pauseAudios(e.target); } }, true);
 function playVoice(id, b) {
-  pauseAudios(); stopVoice(); player.src = VOICES[id]; curBtn = b; paint(b, true);
+  pauseAudios(); stopVoice(); player.src = soundUrl(VOICES[id]); curBtn = b; paint(b, true);
   var p = player.play(); if (p && p.catch) p.catch(function () { if (curBtn === b) paint(b, false); curBtn = null; });
 }
 function voiceBtn(id, text) {
@@ -238,17 +249,17 @@ function blockSay(b, id, scr) {
     stopVoice();
     if (micMissing()) { aloud(warn.textContent); return; }
     warn.hidden = true; retry.hidden = true; up.hidden = true;
-    var hadMic = !!(micStream && micStream.active);
+    var hadMic = micLive();
     mode = "asking"; mic.className = "mic wait"; mic.innerHTML = "<span class='ic'>&#127897;&#65039;</span><span>Press Allow to turn on the microphone</span>";
     getMic().then(function (stream) {
       if (cancelled) return;
       /* a permission prompt ends full screen; one more tap brings it back before recording */
       if (!hadMic && wantFs && !document.fullscreenElement) { idle("Microphone is on. Tap and speak"); return; }
       ms = stream; chunks = []; heard = 0; left = b.seconds * 10;
-      var type = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"].filter(function (x) { return MediaRecorder.isTypeSupported(x); })[0];
+      var type = ["audio/mp4;codecs=mp4a.40.2", "audio/mp4", "audio/webm;codecs=opus", "audio/webm"].filter(function (x) { return MediaRecorder.isTypeSupported(x); })[0];
       mr = new MediaRecorder(ms, type ? { mimeType: type, audioBitsPerSecond: 32000 } : { audioBitsPerSecond: 32000 });
       mr.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
-      mr.onstop = function () { var blob = new Blob(chunks, { type: mr.mimeType }); cleanup(); evaluate(blob); };
+      mr.onstop = function () { var blob = new Blob(chunks, { type: (mr.mimeType || "").split(";")[0] }); cleanup(); evaluate(blob); };
       var an = null, buf = null, hang = 0;
       try { ac = new (window.AudioContext || window.webkitAudioContext)(); if (ac.resume) ac.resume(); an = ac.createAnalyser(); an.fftSize = 1024; ac.createMediaStreamSource(ms).connect(an); buf = new Uint8Array(an.fftSize); } catch (e) { an = null; }
       mr.start(); mode = "rec"; mic.className = "mic rec";
@@ -377,7 +388,7 @@ function blockAudio(b) {
   var box = el("div", "block"), a = el("audio");
   a.controls = true; a.preload = "metadata";
   box.appendChild(a);
-  if (VOICES[b.slot]) { a.src = VOICES[b.slot]; return box; }
+  if (VOICES[b.slot]) { a.src = soundUrl(VOICES[b.slot]); return box; }
   var link = "https://drive.google.com/file/d/" + b.drive + "/view", usedBackup = false, watch = null;
   function backup() {
     if (usedBackup) return; usedBackup = true; clearTimeout(watch); a.remove();
@@ -385,9 +396,11 @@ function blockAudio(b) {
     box.insertBefore(f, box.firstChild);
   }
   a.addEventListener("error", backup);
-  a.addEventListener("loadedmetadata", function () { clearTimeout(watch); });
+  ["loadedmetadata", "canplay", "playing"].forEach(function (n) { a.addEventListener(n, function () { clearTimeout(watch); watch = -1; }); });
+  /* iPhones load nothing until play is pressed, so the wait starts there */
+  a.addEventListener("play", function () { if (isIOS() && watch === null && a.readyState < 1) watch = setTimeout(backup, 12000); });
   a.src = "https://drive.google.com/uc?export=download&id=" + b.drive;
-  watch = setTimeout(backup, 12000);
+  if (!isIOS()) watch = setTimeout(backup, 12000);
   box.append(el("p", "soft", "No sound? <a href='" + link + "' target='_blank' rel='noopener'>Open the audio in Google Drive</a>."));
   return box;
 }
@@ -414,8 +427,10 @@ function score() { var k = allScored(); return { right: k.filter(function (x) { 
 
 /* ---------- microphone: asked once at the start, so no prompt throws the student out of full screen ---------- */
 var micStream = null, micDenied = false;
+function micLive() { return !!micStream && micStream.active && micStream.getAudioTracks().some(function (x) { return x.readyState === "live" && !x.muted; }); }
 function getMic() {
-  if (micStream && micStream.active) return Promise.resolve(micStream);
+  if (micLive()) return Promise.resolve(micStream);
+  if (micStream) { micStream.getTracks().forEach(function (x) { x.stop(); }); micStream = null; }
   if (micDenied || micMissing()) return Promise.reject(new Error("no mic"));
   return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (m) { micStream = m; return m; }, function (e) { micDenied = true; throw e; });
 }
@@ -424,12 +439,14 @@ var micAsking = false, micWatch = null, micAskedOnTap = false;
 var MIC_NOTES = {
   app: { en: "Speaking tasks: you will record with your phone's recorder. The lesson shows you a gold button.", uz: "Gapirish topshiriqlarida telefoningiz diktofonida yozib olasiz. Dars sizga oltin tugmani koʻrsatadi.", ru: "В заданиях на говорение вы запишете голос диктофоном телефона. Урок покажет золотую кнопку.", tg: "Дар супоришҳои гуфторӣ овозро бо сабткунаки телефон сабт мекунед. Дарс ба шумо тугмаи тиллоиро нишон медиҳад." },
   none: { en: "This app can't use the microphone. Open the file in Google Chrome.", uz: "Bu dastur mikrofonni ishlata olmaydi. Faylni Google Chrome brauzerida oching.", ru: "Это приложение не может использовать микрофон. Откройте файл в Google Chrome.", tg: "Ин барнома микрофонро истифода бурда наметавонад. Файлро дар Google Chrome кушоед." },
+  safari: { en: "This app can't use the microphone. Open the link in Safari.", uz: "Bu dastur mikrofonni ishlata olmaydi. Havolani Safari brauzerida oching.", ru: "Это приложение не может использовать микрофон. Откройте ссылку в Safari.", tg: "Ин барнома микрофонро истифода бурда наметавонад. Пайвандро дар Safari кушоед." },
   off: { en: "The microphone is off. Press Start and then Allow.", uz: "Mikrofon oʻchiq. Start tugmasini, keyin Allow ni bosing.", ru: "Микрофон выключен. Нажмите Start, затем Allow.", tg: "Микрофон хомӯш аст. Start-ро пахш кунед, баъд Allow-ро." }
 };
+function isIOS() { return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); }
 function fromApp() { return location.protocol === "content:"; }
 function micMissing() { return fromApp() || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder; }
 function askMic() {
-  if (micAsking || (micStream && micStream.active) || micDenied || micMissing() || !lessonSpeaks()) return;
+  if (micAsking || micLive() || micDenied || micMissing() || !lessonSpeaks()) return;
   micAsking = true;
   function end() { if (!micAsking) return; micAsking = false; if (micWatch) micWatch(); }
   getMic().then(end, end); setTimeout(end, 8000);
@@ -509,7 +526,7 @@ function startScreen() {
   var micNote = el("div", "warnbox"); micNote.hidden = true;
   function upd() {
     go.disabled = !inp.value.trim() || !st.lang || micAsking; go.textContent = micAsking ? "Press Allow to turn on the microphone" : goText;
-    var speaks = lessonSpeaks() && st.i < L.screens.length - 1, kind = !speaks ? "" : fromApp() ? "app" : micMissing() ? "none" : micDenied ? "off" : "";
+    var speaks = lessonSpeaks() && st.i < L.screens.length - 1, kind = !speaks ? "" : fromApp() ? "app" : micMissing() ? (isIOS() ? "safari" : "none") : micDenied ? "off" : "";
     micNote.hidden = !kind;
     if (kind) micNote.textContent = MIC_NOTES[kind][st.lang || "en"];
   }
@@ -519,7 +536,7 @@ function startScreen() {
   go.onclick = function () {
     st.name = inp.value.trim(); if (st.i < 0) st.i = 0; save(); wantFs = true;
     /* some phones show no prompt until the student taps: ask once more on this tap */
-    if (lessonSpeaks() && st.i < L.screens.length - 1 && !micMissing() && !(micStream && micStream.active) && !micAskedOnTap) {
+    if (lessonSpeaks() && st.i < L.screens.length - 1 && !micMissing() && !micLive() && !micAskedOnTap) {
       micAskedOnTap = true; micDenied = false; micAsking = true; upd();
       var end = function () { if (!micAsking) return; micAsking = false; if (micWatch) micWatch(); };
       getMic().then(end, end); setTimeout(end, 8000); return;
@@ -708,17 +725,17 @@ function openStudio() {
       if (!navigator.mediaDevices || !window.MediaRecorder) { stx.textContent = "This browser can't record. Use Chrome on a computer, or add a file."; return; }
       micDenied = false;
       getMic().then(function (ms) {
-        var type = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"].filter(function (x) { return MediaRecorder.isTypeSupported(x); })[0], chunks = [];
+        var type = ["audio/mp4;codecs=mp4a.40.2", "audio/mp4", "audio/webm;codecs=opus", "audio/webm"].filter(function (x) { return MediaRecorder.isTypeSupported(x); })[0], chunks = [];
         var mr = new MediaRecorder(ms, type ? { mimeType: type, audioBitsPerSecond: 48000 } : {}); recorder = mr; mr.owner = v.id;
         mr.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
         mr.onstop = function () {
           rec.innerHTML = "&#9679; Record";
-          var fr = new FileReader(); fr.onload = function () { setData(fr.result); }; fr.readAsDataURL(new Blob(chunks, { type: mr.mimeType }));
+          var fr = new FileReader(); fr.onload = function () { setData(fr.result); }; fr.readAsDataURL(new Blob(chunks, { type: (mr.mimeType || "").split(";")[0] }));
         };
         mr.start(); rec.innerHTML = "&#9632; Stop"; stx.textContent = "Recording…";
       }).catch(function () { stx.textContent = "The microphone is blocked. Allow it in the address bar, or add a file."; });
     };
-    play.onclick = function () { try { player.pause(); } catch (e) {} player.src = VOICES[v.id]; var p = player.play(); if (p && p.catch) p.catch(function () { stx.textContent = "This sound can't play here."; }); };
+    play.onclick = function () { try { player.pause(); } catch (e) {} player.src = soundUrl(VOICES[v.id]); var p = player.play(); if (p && p.catch) p.catch(function () { stx.textContent = "This sound can't play here."; }); };
     del.onclick = function () { delete VOICES[v.id]; dirty = true; draw(); };
     fi.onchange = function () { var f = fi.files[0]; if (!f) return; var fr = new FileReader(); fr.onload = function () { setData(fr.result); }; fr.readAsDataURL(f); };
     if (v.shared) rec.hidden = true;
