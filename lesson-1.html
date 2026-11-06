@@ -14,7 +14,7 @@
  * The self-study lesson engine. One lesson = one file, lesson-N.html: this whole file is pasted inside it,
  * then EWD.start(LESSON, PICTURES) runs the lesson. See prompt.md for the lesson format.
  * Students: name + language, one step at a time, instant checks, voice notes, recording, score.
- * Teacher: the recording page opens from the start screen (Teacher button, or 5 taps on the logo, or #studio).
+ * Teacher: the recording page opens with 5 taps on the logo on the start screen, or with #studio. Students see no Teacher button.
  * Work goes to the Drive link kept in the "voices" block of the lesson file (_url).
  */
 (function () {
@@ -530,7 +530,6 @@ function startScreen() {
   if (lessonSpeaks()) a.insertBefore(el("p", "soft", (micMissing() ? "" : "This lesson uses your microphone for speaking tasks. Press Allow. ") + (collectUrl() ? "Your recordings and answers go to Mr. Dilshod." : "")), go);
   a.insertBefore(micNote, go);
   if (st.i > 0) { var re = el("button", "btn alt", "Start again from the beginning"); re.type = "button"; re.onclick = function () { st = { name: inp.value.trim(), lang: st.lang, i: -1, r: {}, c: {} }; save(); startScreen(); }; a.appendChild(re); }
-  if (!LESSON.voices.some(function (v) { return !v.shared && LANGS.some(function (y) { return VOICES[v.id + y[4]]; }); })) { var t = el("button", "btn alt", "Teacher: record the voice notes"); t.type = "button"; t.onclick = openStudio; a.appendChild(t); }
   root.textContent = ""; root.appendChild(a);
   if (st.i < LESSON.screens.length - 1) askMic();
   upd();
