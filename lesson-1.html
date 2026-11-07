@@ -759,6 +759,9 @@ function openStudio() {
     b.onclick = function () { Array.prototype.forEach.call(tabs.children, function (c) { c.classList.toggle("sel", c === b); }); LANGS.forEach(function (y) { lists[y[0]].hidden = y[0] !== x[0]; }); window.scrollTo(0, 0); };
     tabs.appendChild(b); lists[x[0]] = el("div", "block"); lists[x[0]].hidden = !!ix;
   });
+  /* a file opened from the phone's files can't use the microphone: say where recording works */
+  var site = "https://mr-dilshod.github.io/" + LESSON.file;
+  if (fromApp()) w.appendChild(el("div", "warnbox", "Recording can't work in a file opened from your phone. Open <a href='" + site + "'>" + site.replace("https://", "") + "</a>, tap the logo 5 times and record there. Or record with your phone's recorder and press Add a file."));
   if (!collectUrl()) w.appendChild(collectPanel()); /* the Drive link is already in the lesson: no setup needed */
   w.appendChild(tabs); LANGS.forEach(function (y) { w.appendChild(lists[y[0]]); });
   var slots = [];
@@ -774,6 +777,7 @@ function openStudio() {
     function setData(url) { VOICES[v.id] = url; dirty = true; draw(); }
     rec.onclick = function () {
       if (recorder && recorder.state === "recording") { if (recorder.owner === v.id) recorder.stop(); return; }
+      if (fromApp()) { stx.textContent = "No microphone in a file opened from your phone. Use the link at the top, or Add a file."; return; }
       if (!navigator.mediaDevices || !window.MediaRecorder) { stx.textContent = "This browser can't record. Use Chrome on a computer, or add a file."; return; }
       micDenied = false;
       getMic().then(function (ms) {
@@ -785,7 +789,7 @@ function openStudio() {
           var fr = new FileReader(); fr.onload = function () { setData(fr.result); }; fr.readAsDataURL(new Blob(chunks, { type: (mr.mimeType || "").split(";")[0] }));
         };
         mr.start(); rec.innerHTML = "&#9632; Stop"; stx.textContent = "Recording…";
-      }).catch(function () { stx.textContent = "The microphone is blocked. Allow it in the address bar, or add a file."; });
+      }).catch(function () { stx.textContent = "The microphone is blocked. Tap the lock icon next to the address, allow the microphone and reload. Or add a file."; });
     };
     play.onclick = function () { try { player.pause(); } catch (e) {} player.src = soundUrl(VOICES[v.id]); var p = player.play(); if (p && p.catch) p.catch(function () { stx.textContent = "This sound can't play here."; }); };
     del.onclick = function () { delete VOICES[v.id]; dirty = true; draw(); };
