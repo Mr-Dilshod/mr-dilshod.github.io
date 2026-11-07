@@ -746,7 +746,7 @@ function openStudio() {
   var w = el("main", "wrap"); w.id = "studio";
   var head = el("div", null, "<p class='eye'>For Mr. Dilshod</p><h2>Voice note studio</h2>");
   w.appendChild(head);
-  w.appendChild(el("p", "soft", "Record each note, or add a sound file. Then press Save: you get a new lesson file with your voice inside. Send that file to your students. Students never see this page."));
+  w.appendChild(el("p", "prep", "Record each note, then press Save the lesson file. Upload the saved file to GitHub. Students never see this page."));
   var top = el("div", "sticky"), saveB = el("button", "btn", "Save the lesson file"), closeB = el("button", "btn alt", "Try the lesson"), info = el("span", "soft"); saveB.type = closeB.type = "button";
   top.append(saveB, closeB, info); w.appendChild(top);
   function counts() {
@@ -759,7 +759,7 @@ function openStudio() {
     b.onclick = function () { Array.prototype.forEach.call(tabs.children, function (c) { c.classList.toggle("sel", c === b); }); LANGS.forEach(function (y) { lists[y[0]].hidden = y[0] !== x[0]; }); window.scrollTo(0, 0); };
     tabs.appendChild(b); lists[x[0]] = el("div", "block"); lists[x[0]].hidden = !!ix;
   });
-  w.appendChild(collectPanel());
+  if (!collectUrl()) w.appendChild(collectPanel()); /* the Drive link is already in the lesson: no setup needed */
   w.appendChild(tabs); LANGS.forEach(function (y) { w.appendChild(lists[y[0]]); });
   var slots = [];
   LESSON.voices.forEach(function (base) { if (base.shared) return; LANGS.forEach(function (y) { slots.push({ id: base.id + y[4], where: base.where, text: base[y[3]] || "(script missing)", list: lists[y[0]] }); }); });
