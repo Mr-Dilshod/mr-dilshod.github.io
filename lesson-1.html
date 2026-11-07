@@ -204,7 +204,7 @@ function blockQuiz(b, id, scr) {
     };
     opts.appendChild(bt); return bt;
   });
-  function show() { bs[b.right].classList.add("ok"); fb.hidden = !b.fb; }
+  function show() { bs[b.right].classList.add("ok"); fb.hidden = !b.fb; if (!fb.hidden) reveal(fb); }
   box.append(opts, fb);
   if (st.r[id]) show();
   scr.need(id, b.scored !== false);
@@ -239,8 +239,19 @@ function blockMatch(b, id, scr) {
 function blockCards(b, id, scr) {
   var box = el("div", "block"), n = st.c[id] || 0, list = el("div", "block"), more = el("button", "btn", b.more || "Show the next one"); more.type = "button";
   function draw() { list.textContent = ""; b.cards.slice(0, n).forEach(function (c) { list.appendChild(el("div", "card", c)); }); more.hidden = n >= b.cards.length; if (n >= b.cards.length) st.r[id] = "done"; }
-  more.onclick = function () { n++; st.c[id] = n; draw(); beep(880, 90); save(); scr.update(); };
+  more.onclick = function () { n++; st.c[id] = n; draw(); beep(880, 90); save(); scr.update(); reveal(more.hidden ? list.lastChild : more); };
   draw(); scr.need(id, false); box.append(list, more); return box;
+}
+/* After something new appears, scroll just enough to show it above the bottom bar, without making the student scroll. */
+function reveal(node) {
+  setTimeout(function () {
+    if (!node || node.hidden || !node.getBoundingClientRect) return;
+    var nav = document.getElementById("nav"), top = document.getElementById("top");
+    var limit = window.innerHeight - (nav ? nav.offsetHeight : 0) - 12, head = top ? top.offsetHeight + 8 : 8, r = node.getBoundingClientRect();
+    var by = r.bottom - limit; if (by <= 0) return;
+    by = Math.min(by, r.top - head); if (by <= 0) return;
+    try { window.scrollBy({ top: by, behavior: "smooth" }); } catch (e) { window.scrollBy(0, by); }
+  }, 60);
 }
 function fmt(n) { return Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0"); }
 function blockSay(b, id, scr) {
