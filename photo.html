@@ -70,7 +70,7 @@ label.btn input{display:none}
       var data = c.toDataURL("image/jpeg", .8); $("prev").src = data; $("prev").hidden = false;
       $("take").hidden = true; $("more").hidden = false;
       line.hidden = false; line.className = "box ok"; line.textContent = "Sending to Mr. Dilshod…";
-      var body = { kind: "voice", lesson: job.l, name: safe(job.n) || "No name", file: (safe(job.n) || "No name") + " - " + safe(job.t) + " - " + stamp() + ".jpg", mime: "image/jpeg", audio: data.split(",")[1] };
+      var body = { kind: "voice", id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), lesson: job.l, name: safe(job.n) || "No name", file: (safe(job.n) || "No name") + " - " + safe(job.t) + " - " + stamp() + ".jpg", mime: "image/jpeg", audio: data.split(",")[1] };
       fetch(job.u, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) })
         .then(function () { line.textContent = "✓ Sent to Mr. Dilshod. You can close this page."; },
               function () { line.className = "box bad"; line.textContent = "No internet. Connect and take the photo again."; $("take").hidden = false; $("more").hidden = true; });

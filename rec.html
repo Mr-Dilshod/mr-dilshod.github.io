@@ -103,7 +103,7 @@ audio{width:100%}
     var fr = new FileReader();
     fr.onload = function () {
       var mime = (blob.type || "audio/webm").split(";")[0], ext = mime.indexOf("mp4") > -1 ? "m4a" : "webm";
-      var data = { kind: "voice", lesson: job.l, name: safe(job.n) || "No name", file: safe(job.n) + " - " + safe(job.w || job.t) + " - " + stampNow() + "." + ext, mime: mime, audio: String(fr.result).split(",")[1] };
+      var data = { kind: "voice", id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), lesson: job.l, name: safe(job.n) || "No name", file: safe(job.n) + " - " + safe(job.w || job.t) + " - " + stampNow() + "." + ext, mime: mime, audio: String(fr.result).split(",")[1] };
       fetch(job.u, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) })
         .then(function () { sent = true; line.textContent = "✓ Sent to Mr. Dilshod"; tell(); },
               function () { line.className = "box bad"; line.textContent = "No internet. Connect and tap Back to the lesson to send it again."; });
