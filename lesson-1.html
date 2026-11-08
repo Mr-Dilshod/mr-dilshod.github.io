@@ -556,6 +556,8 @@ function getMic() {
 /* asked as soon as the lesson opens: the prompt comes before full screen, so it can't throw the student out of it */
 var micAsking = false, micWatch = null, micAskedOnTap = false;
 var MIC_NOTES = {
+  inapp: { en: "Open this lesson in Chrome: tap ⋮ (top right), then Open in Chrome. Here the microphone may not work.", uz: "Darsni Chrome brauzerida oching: ⋮ (yuqori oʻngda), keyin Open in Chrome ni bosing. Bu yerda mikrofon ishlamasligi mumkin.", ru: "Откройте урок в Chrome: нажмите ⋮ (вверху справа), затем Open in Chrome. Здесь микрофон может не работать.", tg: "Дарсро дар Chrome кушоед: ⋮ (боло, тарафи рост), баъд Open in Chrome-ро пахш кунед. Дар ин ҷо микрофон шояд кор накунад." },
+  inappios: { en: "Open this lesson in Safari: tap the compass or ⋯, then Open in Safari. Here the microphone may not work.", uz: "Darsni Safari brauzerida oching: kompas yoki ⋯ belgisini, keyin Open in Safari ni bosing. Bu yerda mikrofon ishlamasligi mumkin.", ru: "Откройте урок в Safari: нажмите компас или ⋯, затем Open in Safari. Здесь микрофон может не работать.", tg: "Дарсро дар Safari кушоед: компас ё ⋯, баъд Open in Safari-ро пахш кунед. Дар ин ҷо микрофон шояд кор накунад." },
   app: { en: "Speaking tasks: you will record with your phone's recorder. The lesson shows you a gold button.", uz: "Gapirish topshiriqlarida telefoningiz diktofonida yozib olasiz. Dars sizga oltin tugmani koʻrsatadi.", ru: "В заданиях на говорение вы запишете голос диктофоном телефона. Урок покажет золотую кнопку.", tg: "Дар супоришҳои гуфторӣ овозро бо сабткунаки телефон сабт мекунед. Дарс ба шумо тугмаи тиллоиро нишон медиҳад." },
   none: { en: "This app can't use the microphone. Open the file in Google Chrome.", uz: "Bu dastur mikrofonni ishlata olmaydi. Faylni Google Chrome brauzerida oching.", ru: "Это приложение не может использовать микрофон. Откройте файл в Google Chrome.", tg: "Ин барнома микрофонро истифода бурда наметавонад. Файлро дар Google Chrome кушоед." },
   safari: { en: "This app can't use the microphone. Open the link in Safari.", uz: "Bu dastur mikrofonni ishlata olmaydi. Havolani Safari brauzerida oching.", ru: "Это приложение не может использовать микрофон. Откройте ссылку в Safari.", tg: "Ин барнома микрофонро истифода бурда наметавонад. Пайвандро дар Safari кушоед." },
@@ -651,7 +653,7 @@ function startScreen() {
   var micNote = el("div", "warnbox"); micNote.hidden = true;
   function upd() {
     go.disabled = !inp.value.trim() || !st.lang || micAsking; go.textContent = micAsking ? "Press Allow to turn on the microphone" : goText;
-    var speaks = lessonSpeaks() && st.i < L.screens.length - 1, kind = !speaks ? "" : fromApp() ? "app" : micMissing() ? (isIOS() ? "safari" : "none") : micDenied ? "off" : "";
+    var speaks = lessonSpeaks() && st.i < L.screens.length - 1, kind = !speaks ? "" : fromApp() ? "app" : inAppBrowser() && !micLive() ? (isIOS() ? "inappios" : "inapp") : micMissing() ? (isIOS() ? "safari" : "none") : micDenied ? "off" : "";
     micNote.hidden = !kind;
     if (kind) micNote.textContent = MIC_NOTES[kind][st.lang || "en"];
   }
@@ -927,7 +929,7 @@ function openStudio() {
   var w = el("main", "wrap"); w.id = "studio";
   var head = el("div", null, "<p class='eye'>For Mr. Dilshod</p><h2>Voice note studio</h2>");
   w.appendChild(head);
-  w.appendChild(el("p", "prep", "Record each note, then press Save the lesson file. Send the saved file to your students. They never see this page."));
+  w.appendChild(el("p", "prep", "Record each note, then press Save the lesson file. Then send the saved file to Claude to put it online. Students never see this page."));
   var top = el("div", "sticky"), saveB = el("button", "btn", "<span class='lg'>Save the lesson file</span><span class='sh'>&#128190; Save file</span>"), closeB = el("button", "btn alt", "Try the lesson"), info = el("span", "soft"); saveB.type = closeB.type = "button";
   /* only a slim bar stays at the top while scrolling: Save and the counts */
   var msg = el("p", "prep"); msg.hidden = true; saveB.classList.add("small"); info.className = "cnt";
