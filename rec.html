@@ -98,7 +98,7 @@ audio{width:100%}
     blob = b; mic.hidden = true; $("after").hidden = false; $("me").src = URL.createObjectURL(b); send();
   }
   function stampNow() { var d = new Date(), p = function (n) { return String(n).padStart(2, "0"); }; return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + "-" + p(d.getMinutes()) + "-" + p(d.getSeconds()); }
-  function safe(s) { return String(s || "").replace(/[\\/:*?"<>|]/g, " ").replace(/[^\p{L}\p{N} .,'-]/gu, "").replace(/\s+/g, " ").trim(); }
+  function safe(s) { return String(s || "").replace(/[\\/:*?"<>|]/g, " ").replace((function () { try { return new RegExp("[^\\p{L}\\p{N} .,'-]", "gu"); } catch (e) { return /[^A-Za-z0-9\u00C0-\u024F\u02BB\u02BC\u0400-\u04FF .,'-]/g; } })(), "").replace(/\s+/g, " ").trim(); }
   function send() {
     var line = $("sent"); line.className = "box ok"; line.textContent = "Sending to Mr. Dilshod…";
     if (!job.u) { line.textContent = "✓ Recorded"; tell(); return; }

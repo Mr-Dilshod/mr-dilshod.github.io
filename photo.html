@@ -61,7 +61,7 @@ label.btn input{display:none}
   $("title").textContent = job.t === "Homework" ? "Send your homework 📷" : job.t;
   $("who").textContent = (job.n ? job.n + ", t" : "T") + "ake a clear photo of your work. It goes to Mr. Dilshod.";
   function stamp() { var d = new Date(), p = function (n) { return String(n).padStart(2, "0"); }; return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + "-" + p(d.getMinutes()) + "-" + p(d.getSeconds()); }
-  function safe(s) { return String(s || "").replace(/[\\/:*?"<>|]/g, " ").replace(/[^\p{L}\p{N} .,'-]/gu, "").replace(/\s+/g, " ").trim(); }
+  function safe(s) { return String(s || "").replace(/[\\/:*?"<>|]/g, " ").replace((function () { try { return new RegExp("[^\\p{L}\\p{N} .,'-]", "gu"); } catch (e) { return /[^A-Za-z0-9\u00C0-\u024F\u02BB\u02BC\u0400-\u04FF .,'-]/g; } })(), "").replace(/\s+/g, " ").trim(); }
   function pick(inp) {
     var f = inp.files[0]; inp.value = ""; if (!f) return;
     var u = URL.createObjectURL(f), im = new Image(), line = $("sent");
