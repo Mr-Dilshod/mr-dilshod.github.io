@@ -1,0 +1,36 @@
+{
+  "book": "Own It! 1",
+  "units": [
+    {
+      "name": "Starter Unit",
+      "lessons": [
+        {
+          "number": 1,
+          "title": "Welcome!",
+          "page": "Student's Book p. 4",
+          "chips": [
+            "📅 Months",
+            "🔢 1st, 2nd, 3rd",
+            "🎂 Dates",
+            "🎨 Colours"
+          ],
+          "url": "https://mr-dilshod.github.io/lesson-1.html",
+          "worksheet": "https://bilimlink.uz/share/127cc6bb4d4d"
+        },
+        {
+          "number": 2,
+          "title": "Reading",
+          "page": "Student's Book p. 5",
+          "chips": [
+            "📖 An online profile",
+            "🌍 Countries",
+            "🏳️ Nationalities",
+            "✏️ My profile"
+          ],
+          "url": "https://mr-dilshod.github.io/lesson-2.html",
+          "worksheet": "https://bilimlink.uz/share/581039bb4888"
+        }
+      ]
+    }
+  ]
+}
