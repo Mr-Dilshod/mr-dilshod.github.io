@@ -1,0 +1,427 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Слушай и Повторяй</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout: one worksheet at a time, like a reading primer; each sound group is a row of big tappable word tiles. */
+:root {
+  --bg: #e9f3f6;
+  --tile: #ffffff;
+  --ink: #16324a;
+  --soft: #4b667a;
+  --line: #bcd2dc;
+  --sound: #c93a22;
+  --mute: #8aa2b1;
+  --accent: #0a716c;
+  --on-accent: #ffffff;
+  --glow: #ffc93c;
+  --on-glow: #16324a;
+  --read: "Andika", "Segoe UI", Verdana, sans-serif;
+  --display: "Baloo 2", "Andika", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10222f; --tile: #1b3446; --ink: #eaf3f7; --soft: #a9c0ce; --line: #34526a;
+    --sound: #ff8f76; --mute: #7f9bad; --accent: #4fd1c5; --on-accent: #0c2029;
+    --glow: #ffc93c; --on-glow: #16324a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10222f; --tile: #1b3446; --ink: #eaf3f7; --soft: #a9c0ce; --line: #34526a;
+  --sound: #ff8f76; --mute: #7f9bad; --accent: #4fd1c5; --on-accent: #0c2029;
+  --glow: #ffc93c; --on-glow: #16324a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--read); font-size: 17px; line-height: 1.5; }
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: var(--ink); opacity: .09;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Ctext x='160' y='108' text-anchor='middle' transform='rotate(-24 160 100)' font-family='sans-serif' font-size='24' font-weight='700'%3E%E2%92%B9 English%3C/text%3E%3C/svg%3E") 0 0 / 320px 200px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Ctext x='160' y='108' text-anchor='middle' transform='rotate(-24 160 100)' font-family='sans-serif' font-size='24' font-weight='700'%3E%E2%92%B9 English%3C/text%3E%3C/svg%3E") 0 0 / 320px 200px;
+}
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto; display: grid; gap: 22px;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 7vw, 3rem); line-height: 1.05; margin: 0; }
+.lede { margin: 4px 0 0; color: var(--soft); }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.speed { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.speed span, .speed label { color: var(--soft); font-size: .9rem; }
+.speed select { max-width: 200px; padding: 6px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--tile); }
+.pill { padding: 6px 14px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 999px; }
+.pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; }
+nav { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+nav button { min-height: 46px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 10px; font-family: var(--display); font-weight: 800; font-size: 1.15rem; }
+nav button[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0; color: var(--soft); font-size: .95rem; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.sheet-head { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; justify-content: space-between; }
+.count { color: var(--soft); font-variant-numeric: tabular-nums; }
+.tip { margin: 0; padding: 12px 16px; background: var(--glow); color: var(--on-glow); border-radius: 10px; font-weight: 700; }
+.note { margin: 0; padding: 12px 16px; border: 2px solid var(--sound); border-radius: 10px; }
+.group { display: grid; gap: 10px; padding-top: 16px; border-top: 1.5px solid var(--line); }
+.group-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+.group-head h3 { font-family: var(--display); font-weight: 800; font-size: 1.35rem; margin: 0; color: var(--sound); }
+.group-head p { margin: 0; color: var(--soft); flex: 1 1 180px; min-width: 0; }
+.all { background: none; border: 0; padding: 4px 0; color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+.tile {
+  position: relative; min-height: 72px; padding: 8px; border: 1.5px solid var(--line); border-bottom-width: 4px;
+  background: var(--tile); border-radius: 12px; font-size: 1.75rem; line-height: 1.2; overflow-wrap: anywhere;
+  transition: transform .08s ease;
+}
+.tile:active { transform: translateY(2px); }
+.tile.heard::after { content: ""; position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+.tile.on, .line.on { background: var(--glow); border-color: var(--glow); color: var(--on-glow); }
+.tile.on .s, .line.on .s, .tile.on .m { color: var(--on-glow); }
+.s { color: var(--sound); font-weight: 700; }
+.m { color: var(--mute); text-decoration: line-through; text-decoration-thickness: 2px; }
+.lines { display: grid; gap: 8px; }
+.line {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px;
+  background: var(--tile); border: 1.5px solid var(--line); border-radius: 12px; font-size: 1.3rem;
+}
+.line svg, .pager svg { flex: none; width: 22px; height: 22px; fill: var(--accent); }
+.line.on svg { fill: var(--on-glow); }
+.pager { display: flex; justify-content: space-between; gap: 10px; }
+.pager button { min-height: 46px; padding: 8px 16px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 10px; font-weight: 700; }
+.pager button[disabled] { visibility: hidden; }
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; color: var(--soft); font-size: .9rem; }
+footer button { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 480px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } nav { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Слушай и повторяй</h1>
+      <p class="lede">Нажмите на слово, послушайте и повторите вслух.</p>
+    </div>
+    <div class="speed">
+      <span>Скорость:</span>
+      <button class="pill" id="speed-normal" type="button">Обычная</button>
+      <button class="pill" id="speed-slow" type="button">Медленно</button>
+      <label for="voice" id="voice-label" hidden>Голос:</label>
+      <select id="voice" hidden></select>
+    </div>
+  </header>
+
+  <nav id="nav" aria-label="Листы"></nav>
+
+  <p class="legend">
+    <span><span class="s">Красная буква</span>: обратите внимание на этот звук</span>
+    <span><span class="m">Зачёркнутая буква</span>: не читается</span>
+  </p>
+
+  <p class="note" id="note" hidden>Звука нет. Проверьте громкость телефона. В настройках должно быть включено озвучивание текста для английского языка. Можно также открыть страницу в другом браузере.</p>
+
+  <main id="sheet" style="display:grid;gap:18px"></main>
+
+  <div class="pager">
+    <button id="prev" type="button">← Предыдущий лист</button>
+    <button id="next" type="button">Следующий лист →</button>
+  </div>
+
+  <footer>
+    <span>by Mr. Dilshod</span>
+    <button id="reset" type="button">Сбросить отметки</button>
+  </footer>
+</div>
+
+<script>
+/* Word markup: [letters] = the sound to notice, (letters) = silent letters. */
+const SHEETS = [
+  { title: "Short vowels", tip: "Внимание: bus = «бас», а не «бус». Буква p читается как п, а не как р.", groups: [
+    { label: "u", hint: "короткое а", words: ["b[u]s","c[u]p","s[u]n","r[u]n","c[u]t"] },
+    { label: "a", hint: "между а и э", words: ["c[a]t","m[a]p","b[a]g","h[a]t"] },
+    { label: "e", hint: "э, без мягкости", words: ["b[e]d","p[e]n","t[e]n","r[e]d"] },
+    { label: "i", hint: "короткое и, без мягкости", words: ["s[i]t","p[i]g","b[i]g","p[i]n"] },
+    { label: "o", hint: "короткое о", words: ["h[o]t","d[o]g","t[o]p","m[o]p"] }
+  ], lines: ["A big red bus.","A cat on a bed.","A pig in a hat.","A dog and a cat.","Run, dog, run!"] },
+  { title: "c, ck, w, x, qu, h", tip: "Конечный звук не оглушайте: dog, а не «док».", groups: [
+    { label: "c", hint: "к (перед a, o, u)", words: ["[c]ap","[c]an","[c]ot","[c]ut"] },
+    { label: "ck", hint: "один звук к", words: ["du[ck]","so[ck]","ba[ck]","ne[ck]","ki[ck]"] },
+    { label: "w", hint: "губы округлены, не в", words: ["[w]in","[w]et","[w]ig","[w]eb"] },
+    { label: "x", hint: "кс", words: ["bo[x]","si[x]","fo[x]","mi[x]"] },
+    { label: "qu", hint: "к + w, губы округлены", words: ["[qu]it","[qu]iz","[qu]ick","[qu]ack"] },
+    { label: "h", hint: "лёгкий выдох, не твёрдое х", words: ["[h]at","[h]ot","[h]en","[h]op"] },
+    { label: "Пары", hint: "звонкий и глухой конец слова", words: ["ba[g]","ba[ck]","do[g]","do[ck]","pi[g]","pi[ck]","be[d]","be[t]"] }
+  ], lines: ["A duck on a rock.","A fox in a box.","Six wet socks.","Quick, quick, duck!","A hen in a hat."] },
+  { title: "sh, ch, th, ng", groups: [
+    { label: "sh", hint: "мягкое ш", words: ["[sh]ip","[sh]op","fi[sh]","di[sh]"] },
+    { label: "ch", hint: "ч", words: ["[ch]in","[ch]op","ri[ch]","lun[ch]"] },
+    { label: "th (глухой)", hint: "язык между зубами, не с", words: ["[th]in","[th]ick","mo[th]","clo[th]"] },
+    { label: "th (звонкий)", hint: "язык между зубами, не з", words: ["[th]is","[th]at","[th]em","[th]en"] },
+    { label: "ng", hint: "через нос, без г", words: ["ri[ng]","si[ng]","lo[ng]","ki[ng]"] }
+  ], lines: ["A fish in a dish.","Sing, king, sing!","Chop, chop, chop!","A long thin fish.","That rich king."] },
+  { title: "Magic e", tip: "e в конце слова не читается. Она заставляет гласную звучать как в алфавите.", groups: [
+    { label: "a + e", hint: "эй", words: ["c[a]k(e)","m[a]k(e)","g[a]m(e)","n[a]m(e)"] },
+    { label: "i + e", hint: "ай", words: ["b[i]k(e)","t[i]m(e)","f[i]v(e)","k[i]t(e)"] },
+    { label: "o + e", hint: "оу", words: ["h[o]m(e)","n[o]s(e)","r[o]p(e)","b[o]n(e)"] },
+    { label: "u + e", hint: "ю", words: ["c[u]b(e)","t[u]b(e)","c[u]t(e)","m[u]l(e)"] },
+    { label: "Пары", hint: "с e звук меняется", words: ["c[a]p","c[a]p(e)","p[i]n","p[i]n(e)","k[i]t","k[i]t(e)","h[o]p","h[o]p(e)","n[o]t","n[o]t(e)","c[u]t","c[u]t(e)","t[u]b","t[u]b(e)"] }
+  ], lines: ["Make a cake.","Ride a bike.","A cute mule.","Take a kite home.","Five big bones."] },
+  { title: "Vowel teams", tip: "Две гласные рядом часто дают один звук.", groups: [
+    { label: "ee", hint: "долгое и", words: ["s[ee]","tr[ee]","f[ee]t","gr[ee]n"] },
+    { label: "ea", hint: "долгое и", words: ["[ea]t","r[ea]d","s[ea]","t[ea]"] },
+    { label: "ai", hint: "эй (в середине слова)", words: ["r[ai]n","w[ai]t","t[ai]l","tr[ai]n"] },
+    { label: "ay", hint: "эй (в конце слова)", words: ["d[ay]","pl[ay]","s[ay]","w[ay]"] },
+    { label: "oa", hint: "оу", words: ["b[oa]t","c[oa]t","r[oa]d","s[oa]p"] },
+    { label: "Пары", hint: "короткий и долгий звук", words: ["s[i]t","s[ea]t","sh[i]p","sh[ee]p","h[i]t","h[ea]t","f[i]ll","f[ee]l"] }
+  ], lines: ["A green tree.","A boat at sea.","A long train.","Rain, rain, rain!","Eat, play, read."] },
+  { title: "oo, ar, or, er", groups: [
+    { label: "oo (долгое)", hint: "долгое у", words: ["m[oo]n","f[oo]d","z[oo]","sp[oo]n"] },
+    { label: "oo (короткое)", hint: "короткое у", words: ["b[oo]k","l[oo]k","g[oo]d","f[oo]t"] },
+    { label: "ar", hint: "долгое а", words: ["c[ar]","st[ar]","p[ar]k","f[ar]m"] },
+    { label: "or", hint: "долгое о", words: ["f[or]k","c[or]n","sh[or]t","sp[or]t"] },
+    { label: "er", hint: "короткий неясный звук", words: ["sist[er]","teach[er]","lett[er]","butt[er]"] }
+  ], lines: ["A good book.","Look at a star.","A car in a park.","A fork and a spoon.","A short letter."] },
+  { title: "Silent letters", tip: "Зачёркнутые буквы не читайте.", groups: [
+    { label: "kn", hint: "k не читается", words: ["(k)[n]ow","(k)[n]ee","(k)[n]ife","(k)[n]ock"] },
+    { label: "wr", hint: "w не читается", words: ["(w)[r]ite","(w)[r]ong","(w)[r]ap","(w)[r]ist"] },
+    { label: "mb", hint: "b не читается", words: ["la[m](b)","co[m](b)","cli[m](b)","thu[m](b)"] },
+    { label: "igh", hint: "gh не читается, i = ай", words: ["n[i](gh)t","l[i](gh)t","r[i](gh)t","h[i](gh)"] },
+    { label: "alk", hint: "l не читается, a = долгое о", words: ["w[a](l)k","t[a](l)k","ch[a](l)k"] }
+  ], lines: ["Knock, knock!","Walk and talk.","Write at night.","A lamb can climb.","A knife and a fork."] },
+  { title: "Heart words", tip: "Эти слова учим наизусть: посмотри, скажи, закрой, напиши, проверь.", groups: [
+    { label: "Наизусть", hint: "не подчиняются правилам", words: ["th[e]","s[ai]d","w[a]s","y[ou]","th[ey]","[one]","t(w)o","c[o]m(e)","s[o]m(e)","h[a]v(e)","[a]r(e)","fr(i)[e]nd"] }
+  ], lines: ["Come and play, friend!","You have two books.","The cat was on the bed.","They said, “Look at the moon!”"] }
+];
+
+const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const $ = (id) => document.getElementById(id);
+const plain = (w) => w.replace(/[\[\]()]/g, "");
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+let slow = store.get("slow", false);
+let heard = new Set(store.get("heard", []));
+let voices = [];
+let chosen = store.get("voice", "");
+let current = 0;
+let keep = [];
+let startTimer = null;
+
+function markup(el, word) {
+  const re = /\[([^\]]+)\]|\(([^)]+)\)|([^\[(]+)/g;
+  let m;
+  while ((m = re.exec(word))) {
+    if (m[3]) { el.append(m[3]); continue; }
+    const span = document.createElement("span");
+    span.className = m[1] ? "s" : "m";
+    span.textContent = m[1] || m[2];
+    el.append(span);
+  }
+}
+
+function loadVoices() {
+  if (!("speechSynthesis" in window)) return;
+  const all = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
+  voices = all.sort((a, b) => rank(b) - rank(a));
+  const sel = $("voice");
+  sel.textContent = "";
+  voices.forEach((v) => {
+    const o = document.createElement("option");
+    o.value = v.name;
+    o.textContent = v.name.replace(/^(Microsoft|Google)\s+/, "");
+    sel.append(o);
+  });
+  if (chosen && voices.some((v) => v.name === chosen)) sel.value = chosen;
+  const many = voices.length > 1;
+  sel.hidden = !many;
+  $("voice-label").hidden = !many;
+}
+function rank(v) { return /en[-_]GB/i.test(v.lang) ? 2 : 1; }
+
+function speak(items) {
+  if (!("speechSynthesis" in window)) { $("note").hidden = false; return; }
+  speechSynthesis.cancel();
+  clearOn();
+  keep = [];
+  const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
+  clearTimeout(startTimer);
+  startTimer = setTimeout(() => { $("note").hidden = false; }, 2500);
+  items.forEach(({ text, el, key }) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = voice ? voice.lang : "en-GB";
+    if (voice) u.voice = voice;
+    u.rate = slow ? 0.55 : 0.85;
+    u.onstart = () => {
+      clearTimeout(startTimer);
+      $("note").hidden = true;
+      clearOn();
+      el.classList.add("on");
+      if (key) markHeard(key, el);
+    };
+    u.onend = () => el.classList.remove("on");
+    u.onerror = (e) => {
+      el.classList.remove("on");
+      if (e.error !== "canceled" && e.error !== "interrupted") { clearTimeout(startTimer); $("note").hidden = false; }
+    };
+    keep.push(u);
+    speechSynthesis.speak(u);
+  });
+}
+function clearOn() { document.querySelectorAll(".on").forEach((n) => n.classList.remove("on")); }
+
+function markHeard(key, el) {
+  heard.add(key);
+  store.set("heard", [...heard]);
+  el.classList.add("heard");
+  updateCount();
+}
+function keysFor(i) {
+  const s = SHEETS[i];
+  const words = s.groups.flatMap((g) => g.words.map(plain));
+  return [...new Set(words)].map((w) => i + ":" + w);
+}
+function updateCount() {
+  const keys = keysFor(current);
+  const done = keys.filter((k) => heard.has(k)).length;
+  const c = document.querySelector(".count");
+  if (c) c.textContent = done + " / " + keys.length + " слов прослушано";
+}
+
+function wordTile(word) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "tile";
+  const text = plain(word);
+  const key = current + ":" + text;
+  b.setAttribute("aria-label", text);
+  b.dataset.key = key;
+  if (heard.has(key)) b.classList.add("heard");
+  markup(b, word);
+  b.addEventListener("click", () => speak([{ text, el: b, key }]));
+  return b;
+}
+
+function render() {
+  const s = SHEETS[current];
+  const root = $("sheet");
+  root.textContent = "";
+
+  const head = document.createElement("div");
+  head.className = "sheet-head";
+  const h2 = document.createElement("h2");
+  h2.textContent = (current + 1) + "-й лист: " + s.title;
+  const count = document.createElement("span");
+  count.className = "count";
+  head.append(h2, count);
+  root.append(head);
+
+  if (s.tip) {
+    const tip = document.createElement("p");
+    tip.className = "tip";
+    tip.textContent = s.tip;
+    root.append(tip);
+  }
+
+  s.groups.forEach((g) => {
+    const sec = document.createElement("section");
+    sec.className = "group";
+    const gh = document.createElement("div");
+    gh.className = "group-head";
+    const h3 = document.createElement("h3");
+    h3.textContent = g.label;
+    const p = document.createElement("p");
+    p.textContent = g.hint;
+    const all = document.createElement("button");
+    all.type = "button";
+    all.className = "all";
+    all.textContent = "Слушать все";
+    gh.append(h3, p, all);
+    const tiles = document.createElement("div");
+    tiles.className = "tiles";
+    const nodes = g.words.map(wordTile);
+    tiles.append(...nodes);
+    all.addEventListener("click", () => speak(nodes.map((n) => ({ text: n.getAttribute("aria-label"), el: n, key: n.dataset.key }))));
+    sec.append(gh, tiles);
+    root.append(sec);
+  });
+
+  const sec = document.createElement("section");
+  sec.className = "group";
+  const gh = document.createElement("div");
+  gh.className = "group-head";
+  const h3 = document.createElement("h3");
+  h3.textContent = "Предложения";
+  const p = document.createElement("p");
+  p.textContent = "Послушайте, потом прочитайте сами";
+  gh.append(h3, p);
+  const lines = document.createElement("div");
+  lines.className = "lines";
+  s.lines.forEach((text) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "line";
+    b.innerHTML = SPEAKER;
+    const t = document.createElement("span");
+    t.textContent = text;
+    b.append(t);
+    b.addEventListener("click", () => speak([{ text, el: b }]));
+    lines.append(b);
+  });
+  sec.append(gh, lines);
+  root.append(sec);
+
+  [...$("nav").children].forEach((b, i) => {
+    if (i === current) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+  });
+  $("prev").disabled = current === 0;
+  $("next").disabled = current === SHEETS.length - 1;
+  updateCount();
+}
+
+function go(i, scroll) {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  current = i;
+  try { if (location.hash !== "#ws" + (i + 1)) location.hash = "ws" + (i + 1); } catch {}
+  render();
+  if (scroll) window.scrollTo(0, 0);
+}
+function fromHash() {
+  const m = /^#ws([1-8])$/.exec(location.hash);
+  return m ? Number(m[1]) - 1 : 0;
+}
+function paintSpeed() {
+  $("speed-normal").setAttribute("aria-pressed", String(!slow));
+  $("speed-slow").setAttribute("aria-pressed", String(slow));
+}
+
+SHEETS.forEach((s, i) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = i + 1;
+  b.setAttribute("aria-label", (i + 1) + "-й лист: " + s.title);
+  b.addEventListener("click", () => go(i));
+  $("nav").append(b);
+});
+$("prev").addEventListener("click", () => go(current - 1, true));
+$("next").addEventListener("click", () => go(current + 1, true));
+$("speed-normal").addEventListener("click", () => { slow = false; store.set("slow", slow); paintSpeed(); });
+$("speed-slow").addEventListener("click", () => { slow = true; store.set("slow", slow); paintSpeed(); });
+$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voice", chosen); });
+$("reset").addEventListener("click", () => { heard = new Set(); store.set("heard", []); render(); });
+window.addEventListener("hashchange", () => { const i = fromHash(); if (i !== current) go(i); });
+
+if ("speechSynthesis" in window) {
+  loadVoices();
+  speechSynthesis.addEventListener?.("voiceschanged", loadVoices);
+}
+paintSpeed();
+current = fromHash();
+render();
+</script>
+
+</body></html>

@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Не перепутай!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+:root {
+  --bg: #e9f3f6; --tile: #ffffff; --ink: #16324a; --soft: #4b667a; --line: #bcd2dc;
+  --sound: #c93a22; --accent: #0a716c; --on-accent: #ffffff;
+  --glow: #ffc93c; --on-glow: #16324a; --ok: #0a716c; --okbg: #dff3ef; --no: #c93a22; --nobg: #fbe6e2;
+  --read: "Andika", "Segoe UI", Verdana, sans-serif;
+  --display: "Baloo 2", "Andika", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10222f; --tile: #1b3446; --ink: #eaf3f7; --soft: #a9c0ce; --line: #34526a;
+    --sound: #ff8f76; --accent: #4fd1c5; --on-accent: #0c2029; --glow: #ffc93c; --on-glow: #16324a;
+    --ok: #4fd1c5; --okbg: #163f42; --no: #ff8f76; --nobg: #4a2723; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10222f; --tile: #1b3446; --ink: #eaf3f7; --soft: #a9c0ce; --line: #34526a;
+  --sound: #ff8f76; --accent: #4fd1c5; --on-accent: #0c2029; --glow: #ffc93c; --on-glow: #16324a;
+  --ok: #4fd1c5; --okbg: #163f42; --no: #ff8f76; --nobg: #4a2723; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { overflow-x: clip; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--read); font-size: 17px; line-height: 1.5; }
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: var(--ink); opacity: .08;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Ctext x='160' y='108' text-anchor='middle' transform='rotate(-24 160 100)' font-family='sans-serif' font-size='24' font-weight='700'%3E%E2%92%B9 English%3C/text%3E%3C/svg%3E") 0 0 / 320px 200px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Ctext x='160' y='108' text-anchor='middle' transform='rotate(-24 160 100)' font-family='sans-serif' font-size='24' font-weight='700'%3E%E2%92%B9 English%3C/text%3E%3C/svg%3E") 0 0 / 320px 200px;
+}
+.wrap {
+  position: relative; z-index: 1; max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px;
+  padding-block: 24px calc(48px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(1.5rem, 9vw, 3rem); line-height: 1.05; margin: 0; }
+.lede { margin: 4px 0 0; color: var(--soft); }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.speed { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.speed span, .speed label { color: var(--soft); font-size: .9rem; }
+.speed select { max-width: 200px; padding: 6px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--tile); }
+.pill { padding: 6px 14px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 999px; }
+.pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; }
+nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+nav button { position: relative; min-height: 46px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 10px; font-family: var(--display); font-weight: 800; font-size: 1.15rem; }
+nav button[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+nav button.full::after { content: "★"; position: absolute; top: 1px; right: 5px; font-size: .8rem; color: var(--glow); }
+h2 { font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.sheet-head { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; justify-content: space-between; }
+.count { color: var(--soft); font-variant-numeric: tabular-nums; }
+.tip { margin: 0; padding: 12px 16px; background: var(--glow); color: var(--on-glow); border-radius: 10px; font-weight: 700; }
+.tip b { color: #a3200b; }
+.note { margin: 0; padding: 12px 16px; border: 2px solid var(--sound); border-radius: 10px; }
+.items { display: grid; gap: 12px; }
+.card { display: grid; gap: 10px; padding: 14px; background: var(--tile); border: 1.5px solid var(--line); border-radius: 14px; min-width: 0; }
+.card.solved { border-color: var(--ok); }
+.qrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.num { color: var(--soft); font-variant-numeric: tabular-nums; font-size: .9rem; }
+.word { display: inline-flex; align-items: center; gap: 10px; padding: 4px 12px; border: 1.5px solid var(--line); border-bottom-width: 4px; border-radius: 12px; background: var(--tile); font-size: 1.9rem; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; min-width: 0; }
+.word svg, .line svg, .say svg { flex: none; width: 22px; height: 22px; fill: var(--accent); }
+.q { margin: 0; font-size: 1.15rem; font-weight: 700; overflow-wrap: anywhere; }
+.sent { margin: 0; font-size: 1.3rem; overflow-wrap: anywhere; }
+.gap { display: inline-block; min-width: 3.2em; border-bottom: 3px solid var(--sound); text-align: center; color: var(--sound); font-weight: 700; }
+.gap.filled { border-color: var(--ok); color: var(--ok); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { min-height: 46px; padding: 8px 16px; border: 1.5px solid var(--line); border-bottom-width: 3px; border-radius: 10px; background: var(--tile); font-size: 1.15rem; overflow-wrap: anywhere; max-width: 100%; text-align: left; }
+.opt.right { background: var(--okbg); border-color: var(--ok); color: var(--ink); font-weight: 700; }
+.opt.wrong { background: var(--nobg); border-color: var(--no); text-decoration: line-through; opacity: .75; }
+.opt:disabled { cursor: default; }
+.syls { display: flex; flex-wrap: wrap; gap: 4px; }
+.syl { min-height: 52px; min-width: 52px; padding: 6px 12px; border: 1.5px solid var(--line); border-bottom-width: 3px; border-radius: 10px; background: var(--tile); font-size: 1.5rem; font-weight: 700; }
+.syl.right { background: var(--glow); border-color: var(--glow); color: var(--on-glow); text-transform: uppercase; }
+.syl.wrong { background: var(--nobg); border-color: var(--no); opacity: .75; }
+.fb { margin: 0; padding: 8px 12px; border-radius: 10px; font-size: 1rem; }
+.fb.good { background: var(--okbg); }
+.fb.bad { background: var(--nobg); }
+.text { display: grid; gap: 6px; padding: 14px; background: var(--tile); border: 1.5px solid var(--line); border-radius: 14px; }
+.line { display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left; padding: 8px 10px; background: transparent; border: 1.5px solid transparent; border-radius: 10px; font-size: 1.25rem; cursor: pointer; }
+.line.on, .word.on { background: var(--glow); border-color: var(--glow); color: var(--on-glow); }
+.line.on svg, .word.on svg { fill: var(--on-glow); }
+.line svg { margin-top: 6px; }
+.ff { border: 0; padding: 0 2px; background: none; color: var(--sound); font-weight: 700; text-decoration: underline dotted; text-underline-offset: 4px; font-size: inherit; }
+.line.on .ff { color: #a3200b; }
+.gloss { margin: 0; padding: 10px 14px; border-radius: 10px; background: var(--glow); color: var(--on-glow); font-weight: 700; }
+.say { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 8px 16px; border: 0; border-radius: 10px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.say svg { fill: var(--on-accent); }
+.done { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--okbg); border: 2px solid var(--ok); font-weight: 700; }
+.pager { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pager button { min-height: 46px; padding: 8px 16px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 10px; font-weight: 700; }
+.pager button[disabled] { visibility: hidden; }
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; color: var(--soft); font-size: .9rem; }
+footer button { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 360px) { body { font-size: 16px; } .word { font-size: 1.6rem; } .opt { padding: 8px 12px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Не перепутай!</h1>
+      <p class="lede">Читаем по-английски, а не по-русски. Нажмите на слово, чтобы его услышать.</p>
+    </div>
+    <div class="speed">
+      <span>Скорость:</span>
+      <button class="pill" id="speed-normal" type="button">Обычная</button>
+      <button class="pill" id="speed-slow" type="button">Медленно</button>
+      <label for="voice" id="voice-label" hidden>Голос:</label>
+      <select id="voice" hidden></select>
+    </div>
+  </header>
+
+  <nav id="nav" aria-label="Листы"></nav>
+
+  <p class="note" id="note" hidden>Звука нет. Проверьте громкость телефона. В настройках должно быть включено озвучивание текста для английского языка. Можно также открыть страницу в Google Chrome.</p>
+
+  <main id="sheet" style="display:grid;gap:16px"></main>
+
+  <div class="pager">
+    <button id="prev" type="button">← Предыдущий лист</button>
+    <button id="next" type="button">Следующий лист →</button>
+  </div>
+
+  <footer>
+    <span>Ⓓ English · Mr. Dilshod</span>
+    <button id="reset" type="button">Пройти лист заново</button>
+  </footer>
+</div>
+
+<script>
+/* Item types:
+   choose: w = word shown (say = what is spoken), q = question, opts, r = right answer text, why = explanation
+   stress: syl = syllables, r = index of the stressed one
+   gap:    s = sentence with {a|*b} (the * marks the right word)
+   text:   lines with [[word]] = false friend (tap for meaning), then questions (choose items) */
+const SHEETS = [
+  { title: "Буквы-обманщики", type: "choose",
+    tip: "Эти английские буквы выглядят как русские, но читаются иначе: <b>H</b> = х, <b>P</b> = п, <b>C</b> = к или с, <b>B</b> = б, <b>y</b> = й или ай, <b>X</b> = кс. Русские буквы в ответах — только подсказка: главное — послушать.",
+    q: "Как читается это слово?",
+    items: [
+      { w: "PEN", opts: ["рен", "пэн"], r: "пэн", why: "P = п. pen — ручка." },
+      { w: "HOT", opts: ["хот", "нот"], r: "хот", why: "H = лёгкий выдох «х». hot — горячий." },
+      { w: "BUS", opts: ["вус", "бас"], r: "бас", why: "B = б, u = короткое «а». bus — автобус." },
+      { w: "CUP", opts: ["кап", "сур"], r: "кап", why: "C = к, P = п. cup — чашка." },
+      { w: "MY", opts: ["му", "май"], r: "май", why: "y в конце слова = «ай». my — мой." },
+      { w: "BOX", opts: ["бокс", "вох"], r: "бокс", why: "B = б, X = кс. box — коробка." },
+      { w: "HOPE", opts: ["норе", "хоуп"], r: "хоуп", why: "H = х, P = п, e на конце не читается. hope — надежда." },
+      { w: "CAKE", opts: ["кейк", "саке"], r: "кейк", why: "C = к, a + e на конце = «эй». cake — торт." },
+      { w: "TEXT", opts: ["техт", "тэкст"], r: "тэкст", why: "X = кс. text — текст." },
+      { w: "BYE", opts: ["вуе", "бай"], r: "бай", why: "B = б, y = «ай», e не читается. bye — пока." }
+    ] },
+  { title: "Ложные друзья", type: "choose",
+    tip: "Слово похоже на русское, но значит другое! Не верьте глазам — проверяйте значение.",
+    q: "Что значит это слово?",
+    items: [
+      { w: "magazine", opts: ["магазин", "журнал", "склад"], r: "журнал", why: "magazine — журнал. А магазин — <b>shop</b>." },
+      { w: "family", opts: ["фамилия", "семья", "фамильярный"], r: "семья", why: "family — семья. А фамилия — <b>surname</b>." },
+      { w: "list", opts: ["лист", "список", "лиса"], r: "список", why: "list — список. А лист бумаги — <b>a sheet of paper</b>." },
+      { w: "box", opts: ["бокс", "коробка", "бокал"], r: "коробка", why: "box — коробка. А бокс — <b>boxing</b>." },
+      { w: "fabric", opts: ["фабрика", "ткань", "фабула"], r: "ткань", why: "fabric — ткань. А фабрика — <b>factory</b>." },
+      { w: "cabinet", opts: ["кабинет", "шкаф", "кабина"], r: "шкаф", why: "cabinet — шкаф с полками. А кабинет — <b>office</b>." },
+      { w: "accurate", opts: ["аккуратный", "точный", "острый"], r: "точный", why: "accurate — точный. А аккуратный — <b>neat</b> или <b>tidy</b>." },
+      { w: "intelligent", opts: ["интеллигентный", "умный", "интересный"], r: "умный", why: "intelligent — умный. А интеллигентный — <b>cultured</b>." },
+      { w: "novel", opts: ["новелла", "роман", "новый"], r: "роман", why: "novel — роман (длинная книга). А новелла — <b>short story</b>." },
+      { w: "smoking", opts: ["смокинг", "курение", "дымоход"], r: "курение", why: "smoking — курение. «No smoking!» — «Не курить!»" },
+      { w: "decade", opts: ["декада (10 дней)", "десять лет", "декабрь"], r: "десять лет", why: "decade — десять лет. А декада — <b>ten days</b>." }
+    ] },
+  { title: "Другое ударение", type: "stress",
+    tip: "Эти слова есть и в русском, но ударение в английском часто на другом слоге. Нажмите на ударный слог, потом послушайте.",
+    q: "Где ударение?",
+    items: [
+      { syl: ["ho", "tel"], r: 1, why: "hoTEL — ударение на второй слог, как в «отЕль»." },
+      { syl: ["cal", "en", "dar"], r: 0, why: "CALendar — ударение на первый слог, а не как в «календАрь»." },
+      { syl: ["pho", "to", "graph"], r: 0, why: "PHOtograph — ударение на первый слог, а не как в «фотогрАф»." },
+      { syl: ["ba", "na", "na"], r: 1, why: "baNAna — на второй слог, и звучит как «бэнАнэ»." },
+      { syl: ["mu", "se", "um"], r: 1, why: "muSEum — «мьюЗИэм»." },
+      { syl: ["choc", "o", "late"], r: 0, why: "CHOColate — читается в два слога: «ЧОК-лит»." },
+      { syl: ["com", "for", "ta", "ble"], r: 0, why: "COMfortable — «КАМФ-тэ-бл»: всего три слога вслух." },
+      { syl: ["in", "ter", "est", "ing"], r: 0, why: "INteresting — «ИН-трэс-тинг»." },
+      { syl: ["com", "pu", "ter"], r: 1, why: "comPUter — «кэмпЬЮтэ»." },
+      { syl: ["veg", "e", "ta", "ble"], r: 0, why: "VEGetable — «ВЭДЖ-тэ-бл»." },
+      { syl: ["pi", "a", "no"], r: 1, why: "piAno — «пиЭноу»." },
+      { syl: ["ca", "nal"], r: 1, why: "caNAL — «кэНЭЛ»." }
+    ] },
+  { title: "Слова-близнецы", type: "gap",
+    tip: "Эти английские слова очень похожи друг на друга. Читайте каждую букву, а не угадывайте слово по первой букве!",
+    q: "Выберите правильное слово.",
+    items: [
+      { s: "Yesterday I {was|*saw} a big dog in the park.", why: "<b>saw</b> — увидел, <b>was</b> — был. Те же буквы, обратный порядок!" },
+      { s: "I {*was|saw} at home yesterday.", why: "<b>was</b> — был (I was at home — я был дома)." },
+      { s: "Your phone is {*on|no} the table.", why: "<b>on</b> — на. <b>no</b> — нет." },
+      { s: "This letter is {form|*from} my sister.", why: "<b>from</b> — от, из. <b>form</b> — анкета, бланк." },
+      { s: "Please fill in this {*form|from}.", why: "<b>form</b> — анкета. fill in a form — заполнить анкету." },
+      { s: "{*Where|Were} do you live?", why: "<b>where</b> — где. <b>were</b> — были." },
+      { s: "They {where|*were} at school on Monday.", why: "<b>were</b> — были." },
+      { s: "Be {quite|*quiet}, please! The baby is sleeping.", why: "<b>quiet</b> (кваЙэт) — тихий. <b>quite</b> (квайт) — довольно." },
+      { s: "The film was {*quite|quiet} good.", why: "<b>quite</b> — довольно, весьма." },
+      { s: "My brother is taller {then|*than} me.", why: "<b>than</b> — чем. <b>then</b> — потом." },
+      { s: "We had lunch and {*then|than} we played football.", why: "<b>then</b> — потом." },
+      { s: "{*Which|Witch} colour do you like?", why: "<b>which</b> — который. <b>witch</b> — ведьма. Звучат одинаково!" },
+      { s: "He walked {though|*through} the park.", why: "<b>through</b> (сру) — через. <b>though</b> (зоу) — хотя." }
+    ] },
+  { title: "Читаем текст", type: "text",
+    tip: "Нажмите на предложение, чтобы его послушать. Красные слова — ложные друзья: нажмите, чтобы узнать значение. Потом прочитайте текст вслух сами и ответьте на вопросы.",
+    lines: [
+      "Sam is twelve.",
+      "On Saturday, his [[family]] goes to the shop.",
+      "Sam's mum has a [[list]]: bread, milk and a [[magazine]] for Dad.",
+      "Dad likes books, too. He is reading a long [[novel]].",
+      "At home, Sam puts the [[magazine]] in a big [[box]] under the [[cabinet]].",
+      "“Be quiet!” says Mum. “Grandma is sleeping.”",
+      "Sam is quiet. He reads the [[magazine]]. It is quite interesting!"
+    ],
+    gloss: { family: "семья", list: "список", magazine: "журнал", novel: "роман", box: "коробка", cabinet: "шкаф" },
+    q: "",
+    items: [
+      { q: "Who goes to the shop?", opts: ["Sam's family", "Sam's teacher", "Sam's dog"], r: "Sam's family", why: "family — семья: «his family goes to the shop»." },
+      { q: "What is on Mum's list?", opts: ["bread, milk and a magazine", "a novel and a box", "fabric and a cabinet"], r: "bread, milk and a magazine", why: "«bread, milk and a magazine for Dad»." },
+      { q: "What is Dad reading?", opts: ["a long novel", "a short story", "a list"], r: "a long novel", why: "novel — роман, длинная книга." },
+      { q: "Where does Sam put the magazine?", opts: ["in a box under the cabinet", "in the shop", "on Grandma's bed"], r: "in a box under the cabinet", why: "box — коробка, cabinet — шкаф." },
+      { q: "Why must Sam be quiet?", opts: ["Grandma is sleeping.", "Dad is reading.", "The shop is closed."], r: "Grandma is sleeping.", why: "«Be quiet! Grandma is sleeping.»" },
+      { q: "The magazine is…", opts: ["quite interesting", "quiet interesting", "very boring"], r: "quite interesting", why: "quite — довольно: quite interesting — довольно интересный." }
+    ] }
+];
+
+const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("nep:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("nep:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
+
+let slow = store.get("slow", false);
+let results = store.get("results", {});   // "sheet:item" -> true (first try) / false (later try)
+let voices = [], chosen = store.get("voice", ""), current = 0, keep = [], startTimer = null;
+
+/* the same order every time for one word, but the right answer is not always in the same place */
+function shuffled(arr, seed) {
+  let h = 0; for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function loadVoices() {
+  if (!("speechSynthesis" in window)) return;
+  voices = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang)).sort((a, b) => rank(b) - rank(a));
+  const sel = $("voice"); sel.textContent = "";
+  voices.forEach((v) => { const o = el("option"); o.value = v.name; o.textContent = v.name.replace(/^(Microsoft|Google)\s+/, ""); sel.append(o); });
+  if (chosen && voices.some((v) => v.name === chosen)) sel.value = chosen;
+  sel.hidden = $("voice-label").hidden = voices.length < 2;
+}
+function rank(v) { return /en[-_]GB/i.test(v.lang) ? 2 : 1; }
+
+function speak(text, node) {
+  if (!("speechSynthesis" in window)) { $("note").hidden = false; return; }
+  speechSynthesis.cancel(); clearOn();
+  const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
+  clearTimeout(startTimer);
+  startTimer = setTimeout(() => { $("note").hidden = false; }, 2500);
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = voice ? voice.lang : "en-GB"; if (voice) u.voice = voice;
+  u.rate = slow ? 0.55 : 0.85;
+  u.onstart = () => { clearTimeout(startTimer); $("note").hidden = true; clearOn(); if (node) node.classList.add("on"); };
+  u.onend = () => node && node.classList.remove("on");
+  u.onerror = (e) => { if (node) node.classList.remove("on"); if (e.error !== "canceled" && e.error !== "interrupted") { clearTimeout(startTimer); $("note").hidden = false; } };
+  keep = [u]; speechSynthesis.speak(u);
+}
+function clearOn() { document.querySelectorAll(".on").forEach((n) => n.classList.remove("on")); }
+
+function key(i) { return current + ":" + i; }
+function save(i, first) { if (!(key(i) in results)) { results[key(i)] = first; store.set("results", results); } updateCount(); paintNav(); }
+function score(s) { const n = SHEETS[s].items.length; let done = 0, first = 0; for (let i = 0; i < n; i++) { const r = results[s + ":" + i]; if (r !== undefined) { done++; if (r) first++; } } return { n, done, first }; }
+function updateCount() {
+  const c = document.querySelector(".count"); if (!c) return;
+  const { n, done, first } = score(current);
+  c.textContent = "★ " + first + " / " + n + " с первого раза";
+  const fin = $("finish");
+  if (fin) {
+    fin.hidden = done < n;
+    fin.textContent = first === n ? "🏆 Идеально! Всё правильно с первого раза. Переходите к следующему листу."
+      : "✅ Лист пройден! С первого раза: " + first + " из " + n + ". Хотите лучше? Нажмите «Пройти лист заново» внизу.";
+  }
+}
+function paintNav() { [...$("nav").children].forEach((b, i) => { const s = score(i); b.classList.toggle("full", s.done === s.n); }); }
+
+function feedback(card, good, html) {
+  let fb = card.querySelector(".fb"); if (!fb) { fb = el("p", "fb"); card.append(fb); }
+  fb.className = "fb " + (good ? "good" : "bad"); fb.innerHTML = html;
+}
+
+/* one card: a word or a question, and answer buttons */
+function chooseCard(item, i, sheet) {
+  const card = el("div", "card");
+  const row = el("div", "qrow");
+  row.append(el("span", "num", (i + 1) + "."));
+  if (item.w) {
+    const w = el("button", "word", SPEAKER + "<span></span>"); w.type = "button";
+    w.lastChild.textContent = item.w;
+    w.setAttribute("aria-label", "Послушать: " + item.w);
+    w.addEventListener("click", () => speak(item.say || item.w.toLowerCase(), w));
+    row.append(w);
+  } else {
+    const q = el("p", "q"); q.textContent = item.q; row.append(q);
+  }
+  card.append(row);
+  const opts = el("div", "opts"); card.append(opts);
+  let tries = 0;
+  const btns = shuffled(item.opts, item.w || item.q).map((t) => {
+    const b = el("button", "opt"); b.type = "button"; b.textContent = t;
+    b.addEventListener("click", () => {
+      if (card.classList.contains("solved")) return;
+      if (t === item.r) { solve(); save(i, tries === 0); if (item.w) speak(item.say || item.w.toLowerCase()); }
+      else { tries++; b.classList.add("wrong"); b.disabled = true; feedback(card, false, "Нет, попробуйте ещё раз. " + (item.w ? "Послушайте слово." : "Посмотрите в текст.")); }
+    });
+    opts.append(b); return b;
+  });
+  function solve() { card.classList.add("solved"); btns.forEach((b) => { b.disabled = true; if (b.textContent === item.r) b.classList.add("right"); }); feedback(card, true, "👍 " + item.why); }
+  if (key(i) in results) solve();
+  return card;
+}
+
+function stressCard(item, i) {
+  const card = el("div", "card");
+  const word = item.syl.join("");
+  const row = el("div", "qrow");
+  row.append(el("span", "num", (i + 1) + "."));
+  const w = el("button", "word", SPEAKER + "<span></span>"); w.type = "button";
+  w.lastChild.textContent = word; w.setAttribute("aria-label", "Послушать: " + word);
+  w.addEventListener("click", () => speak(word, w));
+  row.append(w); card.append(row);
+  const syls = el("div", "syls"); card.append(syls);
+  let tries = 0;
+  const btns = item.syl.map((s, k) => {
+    const b = el("button", "syl"); b.type = "button"; b.textContent = s;
+    b.addEventListener("click", () => {
+      if (card.classList.contains("solved")) return;
+      if (k === item.r) { solve(); save(i, tries === 0); speak(word); }
+      else { tries++; b.classList.add("wrong"); b.disabled = true; feedback(card, false, "Нет, не этот слог. Послушайте слово ещё раз."); }
+    });
+    syls.append(b); return b;
+  });
+  function solve() { card.classList.add("solved"); btns.forEach((b, k) => { b.disabled = true; if (k === item.r) b.classList.add("right"); }); feedback(card, true, "👍 " + item.why); }
+  if (key(i) in results) solve();
+  return card;
+}
+
+function gapCard(item, i) {
+  const card = el("div", "card");
+  const m = /\{([^}]+)\}/.exec(item.s);
+  const choices = m[1].split("|"), right = choices.find((c) => c[0] === "*").slice(1);
+  const plain = item.s.replace(m[0], right);
+  const row = el("div", "qrow"); row.append(el("span", "num", (i + 1) + "."));
+  const sent = el("p", "sent");
+  sent.append(item.s.slice(0, m.index)); const gap = el("span", "gap", "?"); sent.append(gap, item.s.slice(m.index + m[0].length));
+  row.append(sent); card.append(row);
+  const opts = el("div", "opts"); card.append(opts);
+  let tries = 0;
+  const btns = choices.map((c) => c.replace("*", "")).map((t) => {
+    const b = el("button", "opt"); b.type = "button"; b.textContent = t;
+    b.addEventListener("click", () => {
+      if (card.classList.contains("solved")) return;
+      if (t === right) { solve(); save(i, tries === 0); speak(plain); }
+      else { tries++; b.classList.add("wrong"); b.disabled = true; feedback(card, false, "Нет! Прочитайте слово по буквам ещё раз."); }
+    });
+    opts.append(b); return b;
+  });
+  function solve() {
+    card.classList.add("solved"); gap.textContent = right; gap.classList.add("filled");
+    btns.forEach((b) => { b.disabled = true; if (b.textContent === right) b.classList.add("right"); });
+    feedback(card, true, "👍 " + item.why);
+    if (!card.querySelector(".say")) {
+      const say = el("button", "say", SPEAKER + "Послушать предложение"); say.type = "button";
+      say.addEventListener("click", () => speak(plain, say)); card.append(say);
+    }
+  }
+  if (key(i) in results) solve();
+  return card;
+}
+
+function textBlock(s) {
+  const box = el("div", "text");
+  const gloss = el("p", "gloss"); gloss.hidden = true;
+  s.lines.forEach((line) => {
+    const plain = line.replace(/\[\[|\]\]/g, "");
+    const b = el("div", "line"); b.setAttribute("role", "button"); b.tabIndex = 0;
+    b.innerHTML = SPEAKER; const t = el("span");
+    line.split(/(\[\[[^\]]+\]\])/).forEach((part) => {
+      const m = /^\[\[(.+)\]\]$/.exec(part);
+      if (!m) { t.append(part); return; }
+      const f = el("button", "ff"); f.type = "button"; f.textContent = m[1];
+      f.addEventListener("click", (e) => { e.stopPropagation(); gloss.hidden = false; gloss.textContent = m[1] + " — " + s.gloss[m[1]]; speak(m[1], null); });
+      t.append(f);
+    });
+    b.append(t);
+    b.addEventListener("click", () => speak(plain, b));
+    b.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); speak(plain, b); } });
+    box.append(b);
+  });
+  box.append(gloss);
+  return box;
+}
+
+function render() {
+  const s = SHEETS[current], root = $("sheet");
+  root.textContent = "";
+  const head = el("div", "sheet-head");
+  const h2 = el("h2"); h2.textContent = (current + 1) + ". " + s.title;
+  head.append(h2, el("span", "count")); root.append(head);
+  root.append(el("p", "tip", s.tip));
+  if (s.type === "text") {
+    root.append(textBlock(s));
+    root.append(el("h2", "", "Вопросы"));
+  } else if (s.q) {
+    const q = el("p", "q"); q.textContent = s.q; root.append(q);
+  }
+  const items = el("div", "items");
+  s.items.forEach((it, i) => items.append(s.type === "stress" ? stressCard(it, i) : s.type === "gap" ? gapCard(it, i) : chooseCard(it, i)));
+  root.append(items);
+  const fin = el("p", "done"); fin.id = "finish"; fin.hidden = true; root.append(fin);
+  [...$("nav").children].forEach((b, i) => { if (i === current) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+  $("prev").disabled = current === 0;
+  $("next").disabled = current === SHEETS.length - 1;
+  updateCount(); paintNav();
+}
+
+function go(i, scroll) {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  current = i;
+  try { if (location.hash !== "#ws" + (i + 1)) history.replaceState(null, "", "#ws" + (i + 1)); } catch (e) {}
+  render();
+  if (scroll !== false) window.scrollTo(0, 0);
+}
+function fromHash() { const m = /^#ws([1-5])$/.exec(location.hash); return m ? Number(m[1]) - 1 : 0; }
+function paintSpeed() { $("speed-normal").setAttribute("aria-pressed", String(!slow)); $("speed-slow").setAttribute("aria-pressed", String(slow)); }
+
+SHEETS.forEach((s, i) => {
+  const b = el("button"); b.type = "button"; b.textContent = i + 1;
+  b.setAttribute("aria-label", (i + 1) + ". " + s.title); b.title = s.title;
+  b.addEventListener("click", () => go(i, false)); $("nav").append(b);
+});
+$("prev").addEventListener("click", () => go(current - 1));
+$("next").addEventListener("click", () => go(current + 1));
+$("speed-normal").addEventListener("click", () => { slow = false; store.set("slow", slow); paintSpeed(); });
+$("speed-slow").addEventListener("click", () => { slow = true; store.set("slow", slow); paintSpeed(); });
+$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voice", chosen); });
+$("reset").addEventListener("click", () => {
+  Object.keys(results).forEach((k) => { if (k.startsWith(current + ":")) delete results[k]; });
+  store.set("results", results); render();
+});
+if ("speechSynthesis" in window) { loadVoices(); speechSynthesis.addEventListener && speechSynthesis.addEventListener("voiceschanged", loadVoices); }
+paintSpeed();
+current = fromHash();
+render();
+</script>
+</body>
+</html>
