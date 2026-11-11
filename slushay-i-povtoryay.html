@@ -424,4 +424,9 @@ current = fromHash();
 render();
 </script>
 
+<script>/* full screen from the first tap, and again on the next tap if it was left (iPhones have no full screen) */
+(function () { function fs() { var d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
+  if (!f || document.fullscreenElement || document.webkitFullscreenElement) return;
+  try { var r = f.call(d, { navigationUI: "hide" }); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
+  document.addEventListener("click", fs, true); document.addEventListener("keydown", fs, true); })();</script>
 </body></html>
