@@ -2,7 +2,9 @@
 
 Each lesson file starts itself with EWD.start({...}); that object already holds
 the lesson number, title ("Unit name: Lesson name"), book page and topic chips.
-Worksheet links live in worksheets.json ({"1": "https://...", ...}).
+Worksheet links live in worksheets.json ({"1": "https://...", ...}). They are NOT copied into
+lessons.json: a worksheet opens only from the end of its lesson (after the homework photo), so
+students can't skip the lesson. The lesson reads worksheets.json itself.
 
 The Ⓓ English page on the blog reads lessons.json, so a new lesson appears there
 as soon as its file is pushed. Run by .github/workflows/lessons.yml on every push.
@@ -38,15 +40,12 @@ def read_lesson(path):
 
 
 def main():
-    ws_path = os.path.join(ROOT, "worksheets.json")
-    worksheets = json.load(open(ws_path, encoding="utf-8")) if os.path.exists(ws_path) else {}
     lessons = []
     for path in glob.glob(os.path.join(ROOT, "lesson-*.html")):
         if not re.fullmatch(r"lesson-\d+\.html", os.path.basename(path)):
             continue
         lesson = read_lesson(path)
         if lesson:
-            lesson["worksheet"] = worksheets.get(str(lesson["number"]), "")
             lessons.append(lesson)
     lessons.sort(key=lambda l: l["number"] or 0)
 
