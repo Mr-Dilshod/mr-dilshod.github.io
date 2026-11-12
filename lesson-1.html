@@ -811,7 +811,8 @@ function worksheetBox(box) {
 }
 function endScreen() {
   var E = LESSON.end, sc = score(), box = el("div", "block"), d = new Date();
-  var when = d.getDate() + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + d.getFullYear() + ", " + d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0");
+  var MON = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], h12 = d.getHours() % 12 || 12;
+  var when = MON[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + ", " + h12 + ":" + String(d.getMinutes()).padStart(2, "0") + (d.getHours() < 12 ? " AM" : " PM");
   var c = el("div", "score");
   c.append(el("span", "k", "Lesson " + LESSON.number + " result"), el("b", null, esc(st.name)), el("b", "big", sc.right + " / " + sc.total), el("span", null, "right on the first try"), el("span", "task", sc.right >= sc.total * .9 ? "🥇 Gold medal!" : sc.right >= sc.total * .7 ? "🥈 Silver medal!" : "🥉 Bronze medal. You finished it!"), el("span", "soft", when));
   box.appendChild(c);
