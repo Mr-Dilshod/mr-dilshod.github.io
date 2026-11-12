@@ -799,7 +799,7 @@ function endPreview() { PREVIEW = false; if (stKeep) st = stKeep; stKeep = null;
 var WS_URL = "https://mr-dilshod.github.io/worksheets.json";
 function worksheetBox(box) {
   box.innerHTML = "";
-  if (!st.r.hw && !PREVIEW) { box.appendChild(el("p", "soft", "🔒 Send the photo of your homework, and the button for the worksheet appears here.")); return; }
+  if (!st.r.hw) { box.appendChild(el("p", "soft", "🔒 Send the photo of your homework, and the button for the worksheet appears here.")); return; }
   var wait = el("p", "soft", "Looking for your worksheet…"); box.appendChild(wait);
   fetch(WS_URL + "?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
     var link = j && j[String(LESSON.number)];
