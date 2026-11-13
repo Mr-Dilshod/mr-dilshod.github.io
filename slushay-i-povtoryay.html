@@ -267,7 +267,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 
-let slow = store.get("slow", false);
+let slow = store.get("slow", true);
 let heard = new Set(store.get("heard", []));
 let voices = [];
 let chosen = store.get("voice", "");

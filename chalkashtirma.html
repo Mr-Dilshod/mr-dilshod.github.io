@@ -304,7 +304,7 @@ const store = {
 };
 const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
 
-let slow = store.get("slow", false);
+let slow = store.get("slow", true);
 let results = store.get("results", {});   // "sheet:item" -> true (first try) / false (later try)
 let voices = [], chosen = store.get("voice", ""), current = 0, keep = [], startTimer = null;
 
