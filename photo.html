@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <title>Send a photo · Ⓓ English</title>
 <style>
-:root{--navy:#FFFFFF;--paper:#F5F8FB;--goldtx:#762C85;--line:rgba(var(--ink),.14);--soft:#5A6478;--text:#1F2A44;--gold:#F37C22;--gold2:#0089C2;--ok:#2F8F5B;--okbg:rgba(47,143,91,.07);--bad:#C2413A;--badbg:rgba(194,65,58,.09);--ink:31,42,68;--wm:#13213F;color-scheme:light dark}
+:root{--navy:#FFFFFF;--paper:#F7F3FC;--goldtx:#762C85;--line:rgba(var(--ink),.14);--soft:#5A6478;--text:#1F2A44;--gold:#8A4FC7;--gold2:#6E36A8;--ok:#2F8F5B;--okbg:rgba(47,143,91,.07);--bad:#C2413A;--badbg:rgba(194,65,58,.09);--ink:31,42,68;--wm:#13213F;color-scheme:light dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
@@ -36,13 +36,15 @@ audio{width:100%}
 img.prev{width:100%;border-radius:12px;box-shadow:inset 0 0 0 1px var(--line)}
 label.btn{display:flex;align-items:center;justify-content:center;text-align:center}
 label.btn input{display:none}
-@media (prefers-color-scheme:dark){:root{--paper:#111827;--text:#E8ECF4;--soft:#A3ADC2;--goldtx:#D9A2E8;--gold:#F59A4F;--gold2:#1683BE;--navy:#FFFFFF;--ink:232,236,244;--wm:#F1F4FA;--ok:#5CC98C;--okbg:rgba(92,201,140,.13);--bad:#FF8A7A;--badbg:rgba(255,138,122,.13)}}
+.hero{padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,#8A4FC7,#5E2A96);box-shadow:0 12px 28px rgba(94,42,150,.25);color:#fff}.hero .eye{color:#E6D4FF}.hero h1{color:#fff}
+@media (prefers-color-scheme:dark){.hero{background:linear-gradient(135deg,#7440B4,#45207A)}}
+@media (prefers-color-scheme:dark){:root{--paper:#141020;--text:#E8ECF4;--soft:#A3ADC2;--goldtx:#D9B8FF;--gold:#A877E0;--gold2:#7E46C2;--navy:#FFFFFF;--ink:232,236,244;--wm:#F1F4FA;--ok:#5CC98C;--okbg:rgba(92,201,140,.13);--bad:#FF8A7A;--badbg:rgba(255,138,122,.13)}}
 </style>
 </head>
 <body>
 <main>
   <div class="brand"><span class="badge">D</span><span class="wm">English</span></div>
-  <div><p class="eye" id="eye">Photo</p><h1 id="title">Send a photo 📷</h1></div>
+  <div class="hero"><p class="eye" id="eye">Photo</p><h1 id="title">Send a photo 📷</h1></div>
   <p class="soft" id="who"></p>
   <label class="btn" id="take">📷 Take a photo<input type="file" accept="image/*" capture="environment" id="file"></label>
   <img class="prev" id="prev" alt="Your photo" hidden>
