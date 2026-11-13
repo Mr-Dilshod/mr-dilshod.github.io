@@ -174,6 +174,7 @@ body{font-family:var(--sans)}
       <button class="pill" id="speed-slow" type="button">Sekin</button>
       <label for="voice" id="voice-label" hidden>Ovoz:</label>
       <select id="voice" hidden></select>
+      <button class="pill" id="alt-voice" type="button" aria-pressed="false">🔊 Ovoz chiqmasa, bosing</button>
     </div>
   </header>
 
@@ -184,7 +185,7 @@ body{font-family:var(--sans)}
     <span><span class="m">Chizilgan harf</span>: oʻqilmaydi</span>
   </p>
 
-  <p class="note" id="note" hidden>Ovoz eshitilmadi. Telefon ovozini tekshiring. Sozlamalarda ingliz tili uchun “matnni ovozga aylantirish” yoqilgan boʻlishi kerak, yoki boshqa brauzerda oching.</p>
+  <p class="note" id="note" hidden>Ovoz eshitilmadi. Telefon ovozini tekshiring. Sozlamalarda ingliz tili uchun “matnni ovozga aylantirish” yoqilgan boʻlishi kerak, yoki boshqa brauzerda oching. Yoki yuqoridagi 🔊 tugmasini bosing.</p>
 
   <main id="sheet" style="display:grid;gap:18px"></main>
 
@@ -304,7 +305,7 @@ function loadVoices() {
 function rank(v) { return /en[-_]US/i.test(v.lang) ? 2 : 1; }
 
 /* Some phone browsers have no English voice: then play the words as audio from Google Translate instead. */
-let useAudio = false, player = null;
+let useAudio = store.get("audio", false), player = null;
 function playAudio(items, gap) {
   if (player) { player.onended = player.onerror = null; player.pause(); }
   if ("speechSynthesis" in window) speechSynthesis.cancel();
@@ -322,7 +323,10 @@ function playAudio(items, gap) {
   };
   next();
 }
-setTimeout(() => { if (!("speechSynthesis" in window) || !voices.length) useAudio = true; }, 2000);
+setTimeout(() => { if (!("speechSynthesis" in window) || !voices.length) { useAudio = true; paintAlt(); } }, 2000);
+function paintAlt() { $("alt-voice").setAttribute("aria-pressed", String(useAudio)); }
+$("alt-voice").addEventListener("click", () => { useAudio = !useAudio; store.set("audio", useAudio); paintAlt(); if (useAudio) playAudio([{ text: "Hello!" }]); else if ("speechSynthesis" in window) speechSynthesis.cancel(); });
+paintAlt();
 function speak(items) {
   const conv = items.map((it) => ({ text: it.text, el: it.el, onstart: () => { if (it.key) markHeard(it.key, it.el); } }));
   if (useAudio || !("speechSynthesis" in window)) { playAudio(conv); return; }
