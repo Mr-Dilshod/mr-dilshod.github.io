@@ -306,14 +306,35 @@ function loadVoices() {
 }
 function rank(v) { return /en[-_]GB/i.test(v.lang) ? 2 : 1; }
 
+/* Some phone browsers have no English voice: then play the words as audio from Google Translate instead. */
+let useAudio = false, player = null;
+function playAudio(items, gap) {
+  if (player) { player.onended = player.onerror = null; player.pause(); }
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  clearTimeout(startTimer); clearOn();
+  let i = 0;
+  const next = () => {
+    if (i >= items.length) return;
+    const it = items[i++];
+    const a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=" + encodeURIComponent(it.text));
+    player = a; a.playbackRate = slow ? 0.7 : 1;
+    a.onplaying = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
+    a.onended = () => { if (it.el) it.el.classList.remove("on"); setTimeout(next, gap || 0); };
+    a.onerror = () => { if (it.el) it.el.classList.remove("on"); $("note").hidden = false; };
+    const p = a.play(); if (p && p.catch) p.catch(() => { $("note").hidden = false; });
+  };
+  next();
+}
+setTimeout(() => { if (!("speechSynthesis" in window) || !voices.length) useAudio = true; }, 2000);
 function speak(items) {
-  if (!("speechSynthesis" in window)) { $("note").hidden = false; return; }
+  const conv = items.map((it) => ({ text: it.text, el: it.el, onstart: () => { if (it.key) markHeard(it.key, it.el); } }));
+  if (useAudio || !("speechSynthesis" in window)) { playAudio(conv); return; }
   speechSynthesis.cancel();
   clearOn();
   keep = [];
   const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
   clearTimeout(startTimer);
-  startTimer = setTimeout(() => { $("note").hidden = false; }, 2500);
+  startTimer = setTimeout(() => { useAudio = true; playAudio(conv); }, 2500);
   items.forEach(({ text, el, key }) => {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = voice ? voice.lang : "en-GB";
@@ -329,7 +350,7 @@ function speak(items) {
     u.onend = () => el.classList.remove("on");
     u.onerror = (e) => {
       el.classList.remove("on");
-      if (e.error !== "canceled" && e.error !== "interrupted") { clearTimeout(startTimer); $("note").hidden = false; }
+      if (e.error !== "canceled" && e.error !== "interrupted") { clearTimeout(startTimer); if (!useAudio) { useAudio = true; playAudio(conv); } }
     };
     keep.push(u);
     speechSynthesis.speak(u);
