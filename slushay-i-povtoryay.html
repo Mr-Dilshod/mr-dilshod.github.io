@@ -271,7 +271,7 @@ const store = {
 let slow = store.get("slow", true);
 let heard = new Set(store.get("heard", []));
 let voices = [];
-let chosen = store.get("voice", "");
+let chosen = store.get("voiceUS", "");
 let current = 0;
 let keep = [];
 let startTimer = null;
@@ -317,7 +317,7 @@ function playAudio(items, gap) {
   const next = () => {
     if (i >= items.length) return;
     const it = items[i++];
-    const a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=" + encodeURIComponent(it.text));
+    const a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=" + encodeURIComponent(it.text));
     player = a; a.playbackRate = slow ? 0.7 : 1;
     a.onplaying = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
     a.onended = () => { if (it.el) it.el.classList.remove("on"); setTimeout(next, gap || 0); };
@@ -499,7 +499,7 @@ $("prev").addEventListener("click", () => go(current - 1, true));
 $("next").addEventListener("click", () => go(current + 1, true));
 $("speed-normal").addEventListener("click", () => { slow = false; store.set("slow", slow); paintSpeed(); });
 $("speed-slow").addEventListener("click", () => { slow = true; store.set("slow", slow); paintSpeed(); });
-$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voice", chosen); });
+$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voiceUS", chosen); });
 $("reset").addEventListener("click", () => { heard = new Set(); store.set("heard", []); render(); });
 window.addEventListener("hashchange", () => { const i = fromHash(); if (i !== current) go(i); });
 

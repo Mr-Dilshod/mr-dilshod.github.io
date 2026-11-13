@@ -307,7 +307,7 @@ const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls)
 
 let slow = store.get("slow", true);
 let results = store.get("results", {});   // "sheet:item" -> true (first try) / false (later try)
-let voices = [], chosen = store.get("voice", ""), current = 0, keep = [], startTimer = null;
+let voices = [], chosen = store.get("voiceUS", ""), current = 0, keep = [], startTimer = null;
 
 /* the same order every time for one word, but the right answer is not always in the same place */
 function shuffled(arr, seed) {
@@ -337,7 +337,7 @@ function playAudio(items, gap) {
   const next = () => {
     if (i >= items.length) return;
     const it = items[i++];
-    const a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=" + encodeURIComponent(it.text));
+    const a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=" + encodeURIComponent(it.text));
     player = a; a.playbackRate = slow ? 0.7 : 1;
     a.onplaying = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
     a.onended = () => { if (it.el) it.el.classList.remove("on"); setTimeout(next, gap || 0); };
@@ -542,7 +542,7 @@ $("prev").addEventListener("click", () => go(current - 1));
 $("next").addEventListener("click", () => go(current + 1));
 $("speed-normal").addEventListener("click", () => { slow = false; store.set("slow", slow); paintSpeed(); });
 $("speed-slow").addEventListener("click", () => { slow = true; store.set("slow", slow); paintSpeed(); });
-$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voice", chosen); });
+$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voiceUS", chosen); });
 $("reset").addEventListener("click", () => {
   Object.keys(results).forEach((k) => { if (k.startsWith(current + ":")) delete results[k]; });
   store.set("results", results); render();
