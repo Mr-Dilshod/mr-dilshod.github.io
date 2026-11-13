@@ -324,7 +324,7 @@ function loadVoices() {
   if (chosen && voices.some((v) => v.name === chosen)) sel.value = chosen;
   sel.hidden = $("voice-label").hidden = voices.length < 2;
 }
-function rank(v) { return /en[-_]GB/i.test(v.lang) ? 2 : 1; }
+function rank(v) { return /en[-_]US/i.test(v.lang) ? 2 : 1; }
 
 /* Some phone browsers have no English voice: then play the words as audio from Google Translate instead. */
 let useAudio = false, player = null;
@@ -354,7 +354,7 @@ function speak(text, node) {
   clearTimeout(startTimer);
   startTimer = setTimeout(() => { useAudio = true; playAudio(conv); }, 2500);
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = voice ? voice.lang : "en-GB"; if (voice) u.voice = voice;
+  u.lang = voice ? voice.lang : "en-US"; if (voice) u.voice = voice;
   u.rate = slow ? 0.55 : 0.85;
   u.onstart = () => { clearTimeout(startTimer); $("note").hidden = true; clearOn(); if (node) node.classList.add("on"); };
   u.onend = () => node && node.classList.remove("on");

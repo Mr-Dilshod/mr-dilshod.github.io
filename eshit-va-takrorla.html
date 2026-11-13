@@ -301,7 +301,7 @@ function loadVoices() {
   sel.hidden = !many;
   $("voice-label").hidden = !many;
 }
-function rank(v) { return /en[-_]GB/i.test(v.lang) ? 2 : 1; }
+function rank(v) { return /en[-_]US/i.test(v.lang) ? 2 : 1; }
 
 /* Some phone browsers have no English voice: then play the words as audio from Google Translate instead. */
 let useAudio = false, player = null;
@@ -334,7 +334,7 @@ function speak(items) {
   startTimer = setTimeout(() => { useAudio = true; playAudio(conv); }, 2500);
   items.forEach(({ text, el, key }) => {
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = voice ? voice.lang : "en-GB";
+    u.lang = voice ? voice.lang : "en-US";
     if (voice) u.voice = voice;
     u.rate = slow ? 0.55 : 0.85;
     u.onstart = () => {
