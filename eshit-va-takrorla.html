@@ -144,8 +144,9 @@ nav button.full::after{color:#E7B95B}
 .pager button#next,.pager #next{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:800}
 .say{border-radius:12px;font-weight:800}
 footer{border-top:1px solid var(--line);padding-top:14px}
-footer span:first-child{font-family:var(--sans)}
-footer span:first-child b{font:600 16px var(--mark);color:var(--ink)}
+footer .sig{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--sans)}
+footer .sig b{font:600 16px var(--mark);color:var(--ink)}
+.badge.mini{width:22px;height:22px;font-size:12px;box-shadow:inset 0 0 0 1px #E7B95B}
 </style>
 
 <div class="wrap">
@@ -183,7 +184,7 @@ footer span:first-child b{font:600 16px var(--mark);color:var(--ink)}
   </div>
 
   <footer>
-    <span>Made by <b>Mr. Dilshod</b></span>
+    <span class="sig"><span class="badge mini" aria-hidden="true">D</span><b>English</b> by <b>Mr. Dilshod</b></span>
     <button id="reset" type="button">Belgilarni tozalash</button>
   </footer>
 </div>
