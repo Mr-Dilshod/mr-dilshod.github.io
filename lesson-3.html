@@ -383,9 +383,9 @@ function blockTimer(b, id, scr) {
   box.appendChild(go); if (b.model) box.appendChild(model); scr.need(id, false); return box;
 }
 function blockWrite(b, id, scr) {
-  /* Typed answers the teacher can read. It ends when the last answer is in, or with "I'm finished", or when the time is up. */
+  /* Typed answers the teacher can read. It ends when the last answer is in, or with "I've finished", or when the time is up. */
   st.w = st.w || {};
-  var box = el("div", "block"), go = el("button", "mic"), row = el("form", "addrow"), inp = el("input"), add = el("button", "btn", "Add"), warn = el("div", "warnbox"), list = el("div", "chips"), fin = el("button", "btn fin", "✓ I'm finished"), model = el("div", "fb", "<span class='k'>Examples</span><br>" + (b.model || "")), sentLine = el("p", "sent");
+  var box = el("div", "block"), go = el("button", "mic"), row = el("form", "addrow"), inp = el("input"), add = el("button", "btn", "Add"), warn = el("div", "warnbox"), list = el("div", "chips"), fin = el("button", "btn fin", "✓ I've finished"), model = el("div", "fb", "<span class='k'>Examples</span><br>" + (b.model || "")), sentLine = el("p", "sent");
   go.type = "button"; add.type = "submit"; fin.type = "button"; inp.id = "write-" + id.replace(/\W/g, "-"); inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocapitalize", "off"); inp.spellcheck = false; inp.setAttribute("aria-label", "Your answer"); inp.placeholder = b.placeholder || "Type an answer";
   row.append(inp, add); row.hidden = true; warn.hidden = true; fin.hidden = true; model.hidden = true; sentLine.hidden = true;
   var answers = (st.w[id] || []).slice(), iv = null, left = b.seconds;
