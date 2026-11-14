@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-14a">
+<meta name="ver" content="2026-11-14b">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -308,7 +308,7 @@ const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls)
 
 let slow = store.get("slow", true);
 let results = store.get("results", {});   // "sheet:item" -> true (first try) / false (later try)
-let voices = [], chosen = store.get("voiceUS", ""), current = 0, keep = [], startTimer = null;
+let voices = [], chosen = store.get("voiceV3", ""), current = 0, keep = [], startTimer = null;
 
 /* the same order every time for one word, but the right answer is not always in the same place */
 function shuffled(arr, seed) {
@@ -324,12 +324,12 @@ function loadVoices() {
   const sel = $("voice"); sel.textContent = "";
   voices.forEach((v) => { const o = el("option"); o.value = v.name; o.textContent = v.name.replace(/^(Microsoft|Google)\s+/, ""); sel.append(o); });
   if (chosen && voices.some((v) => v.name === chosen)) sel.value = chosen;
-  sel.hidden = $("voice-label").hidden = voices.length < 2;
+  paintAlt();
 }
-function rank(v) { return /en[-_]US/i.test(v.lang) ? 2 : 1; }
+function rank(v) { return (/^Google/.test(v.name) ? 4 : /Online|Natural/.test(v.name) ? 3 : 0) + (/en[-_]US/i.test(v.lang) ? 2 : 1); }
 
 /* Some phone browsers have no English voice: then play the words as audio from Google Translate instead. */
-let useAudio = store.get("audio", false), player = null;
+let useAudio = store.get("clips", true), player = null;
 function playAudio(items, gap) {
   if (player) { player.onended = player.onerror = null; player.pause(); }
   if ("speechSynthesis" in window) speechSynthesis.cancel();
@@ -342,14 +342,28 @@ function playAudio(items, gap) {
     player = a; a.playbackRate = slow ? 0.7 : 1;
     a.onplaying = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
     a.onended = () => { if (it.el) it.el.classList.remove("on"); setTimeout(next, gap || 0); };
-    a.onerror = () => { if (it.el) it.el.classList.remove("on"); $("note").hidden = false; };
+    a.onerror = () => { if (it.el) it.el.classList.remove("on"); if ("speechSynthesis" in window && voices.length) { useAudio = false; paintAlt(); speakBack(items.slice(i - 1)); } else $("note").hidden = false; };
     const p = a.play(); if (p && p.catch) p.catch(() => { $("note").hidden = false; });
   };
   next();
 }
+/* the audio voice could not play (no internet): say the rest with the device's own English voice */
+function speakBack(items) {
+  if (!items.length) return;
+  speechSynthesis.cancel(); keep = [];
+  const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
+  items.forEach((it) => {
+    const u = new SpeechSynthesisUtterance(it.text);
+    u.lang = voice ? voice.lang : "en-US"; if (voice) u.voice = voice;
+    u.rate = slow ? 0.72 : 0.9;
+    u.onstart = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
+    u.onend = () => { if (it.el) it.el.classList.remove("on"); };
+    keep.push(u); speechSynthesis.speak(u);
+  });
+}
 setTimeout(() => { if (!("speechSynthesis" in window) || !voices.length) { useAudio = true; paintAlt(); } }, 2000);
-function paintAlt() { $("alt-voice").setAttribute("aria-pressed", String(useAudio)); }
-$("alt-voice").addEventListener("click", () => { useAudio = !useAudio; store.set("audio", useAudio); paintAlt(); if (useAudio) playAudio([{ text: "Hello!" }]); else if ("speechSynthesis" in window) speechSynthesis.cancel(); });
+function paintAlt() { $("alt-voice").setAttribute("aria-pressed", String(useAudio)); $("alt-voice").hidden = useAudio; const many = voices.length > 1 && !useAudio; $("voice").hidden = $("voice-label").hidden = !many; }
+$("alt-voice").addEventListener("click", () => { useAudio = !useAudio; store.set("clips", useAudio); paintAlt(); if (useAudio) playAudio([{ text: "Hello!" }]); else if ("speechSynthesis" in window) speechSynthesis.cancel(); });
 paintAlt();
 function speak(text, node) {
   const conv = [{ text, el: node }];
@@ -360,7 +374,7 @@ function speak(text, node) {
   startTimer = setTimeout(() => { useAudio = true; playAudio(conv); }, 2500);
   const u = new SpeechSynthesisUtterance(text);
   u.lang = voice ? voice.lang : "en-US"; if (voice) u.voice = voice;
-  u.rate = slow ? 0.55 : 0.85;
+  u.rate = slow ? 0.72 : 0.9;
   u.onstart = () => { clearTimeout(startTimer); $("note").hidden = true; clearOn(); if (node) node.classList.add("on"); };
   u.onend = () => node && node.classList.remove("on");
   u.onerror = (e) => { if (node) node.classList.remove("on"); if (e.error !== "canceled" && e.error !== "interrupted") { clearTimeout(startTimer); if (!useAudio) { useAudio = true; playAudio(conv); } } };
@@ -543,7 +557,7 @@ $("prev").addEventListener("click", () => go(current - 1));
 $("next").addEventListener("click", () => go(current + 1));
 $("speed-normal").addEventListener("click", () => { slow = false; store.set("slow", slow); paintSpeed(); });
 $("speed-slow").addEventListener("click", () => { slow = true; store.set("slow", slow); paintSpeed(); });
-$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voiceUS", chosen); });
+$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voiceV3", chosen); });
 $("reset").addEventListener("click", () => {
   Object.keys(results).forEach((k) => { if (k.startsWith(current + ":")) delete results[k]; });
   store.set("results", results); render();
