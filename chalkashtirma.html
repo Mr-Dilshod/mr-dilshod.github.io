@@ -2,6 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
+<meta name="ver" content="2026-11-14a">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -557,5 +558,9 @@ render();
   if (!f || document.fullscreenElement || document.webkitFullscreenElement) return;
   try { var r = f.call(d, { navigationUI: "hide" }); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
   document.addEventListener("click", fs, true); document.addEventListener("keydown", fs, true); })();</script>
+<script>/* an old copy kept by the browser checks for a newer one and swaps itself */
+(function(){try{if(!/^https?:/.test(location.protocol))return;var v=document.querySelector('meta[name="ver"]').content;
+fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=/<meta name="ver" content="([^"]+)"/.exec(t);
+if(m&&m[1]!==v)location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}).catch(function(){})}catch(e){}})();</script>
 </body>
 </html>

@@ -1,4 +1,5 @@
-<!doctype html><html><head><meta charset=utf8><meta name="referrer" content="no-referrer"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8>
+<meta name="ver" content="2026-11-14a"><meta name="referrer" content="no-referrer"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Eshit va Takrorla</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -514,4 +515,8 @@ render();
   if (!f || document.fullscreenElement || document.webkitFullscreenElement) return;
   try { var r = f.call(d, { navigationUI: "hide" }); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
   document.addEventListener("click", fs, true); document.addEventListener("keydown", fs, true); })();</script>
+<script>/* an old copy kept by the browser checks for a newer one and swaps itself */
+(function(){try{if(!/^https?:/.test(location.protocol))return;var v=document.querySelector('meta[name="ver"]').content;
+fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=/<meta name="ver" content="([^"]+)"/.exec(t);
+if(m&&m[1]!==v)location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}).catch(function(){})}catch(e){}})();</script>
 </body></html>
