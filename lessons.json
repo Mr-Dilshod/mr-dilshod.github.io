@@ -51,6 +51,18 @@
             "🎧 A talk"
           ],
           "url": "https://mr-dilshod.github.io/lesson-4.html"
+        },
+        {
+          "number": 5,
+          "title": "Language in Action",
+          "page": "Student's Book p. 8",
+          "chips": [
+            "❓ Whose ... ?",
+            "🧩 mine, yours, hers",
+            "👉 this, that, these, those",
+            "🚦 Imperatives"
+          ],
+          "url": "https://mr-dilshod.github.io/lesson-5.html"
         }
       ]
     }
