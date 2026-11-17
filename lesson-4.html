@@ -429,10 +429,18 @@ function blockPhoto(b, id, scr) {
   /* A photo of notebook or Workbook work goes to the teacher's Drive. */
   var box = el("div", "block"), lab = el("label", "btn photo" + (st.r[id] ? " alt" : "")), inp = el("input"), prev = el("img", "thumb"), line = el("p", "sent");
   inp.type = "file"; inp.accept = "image/*"; inp.id = "photo-" + id.replace(/\W/g, "-");
-  lab.appendChild(document.createTextNode(st.r[id] ? "📷 Take another photo" : (b.button || "📷 Take a photo"))); lab.appendChild(inp);
-  prev.hidden = true; prev.alt = "Your photo"; line.hidden = !st.r[id]; if (st.r[id]) line.textContent = "✓ Your photo is done.";
+  /* homework can take several pages: choose them all at once, or add them one by one */
+  var again = b.pages ? "📷 Add another page" : "📷 Take another photo", pages = function () { return +st.r[id + "#"] || (st.r[id] ? 1 : 0); };
+  if (b.pages) inp.multiple = true;
+  lab.appendChild(document.createTextNode(st.r[id] ? again : (b.button || "📷 Take a photo"))); lab.appendChild(inp);
+  prev.hidden = true; prev.alt = "Your photo"; line.hidden = !st.r[id]; if (st.r[id]) line.textContent = b.pages ? "✓ Pages sent: " + pages() + ". Is there one more page? Add it." : "✓ Your photo is done.";
+  var queue = [];
   inp.onchange = function () {
-    var f = inp.files[0]; if (!f) return;
+    queue = Array.prototype.slice.call(inp.files || []); inp.value = ""; next();
+  };
+  function next() {
+    var f = queue.shift(); if (!f) return;
+    var before = pages();
     var u = URL.createObjectURL(f), im = new Image();
     im.onerror = function () { line.hidden = false; line.textContent = "This picture can't be opened. Try again."; };
     im.onload = function () {
@@ -440,13 +448,16 @@ function blockPhoto(b, id, scr) {
       c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
       c.toBlob(function (blob) {
         prev.src = c.toDataURL("image/jpeg", .6); prev.hidden = false; st.r[id] = "done"; save(); good(); lab.classList.add("alt"); var vp = box.querySelector(".qrbox .btn.alt"); if (vp) vp.hidden = true;
-        lab.firstChild.textContent = "📷 Take another photo";
-        if (collectUrl()) sendVoice(blob, b.task || LESSON.screens[st.i].title, line); else { line.hidden = false; line.textContent = "✓ Your photo is done."; }
+        lab.firstChild.textContent = again;
+        if (b.pages) { st.r[id + "#"] = before + 1; save(); }
+        if (collectUrl()) sendVoice(blob, b.task || LESSON.screens[st.i].title, line, b.pages ? function () { line.textContent = "✓ Pages sent: " + pages() + ". Is there one more page? Add it."; } : null);
+        else { line.hidden = false; line.textContent = b.pages ? "✓ Pages: " + pages() : "✓ Your photo is done."; }
         scr.update();
+        setTimeout(next, 400);
       }, "image/jpeg", .8);
     };
-    im.src = u; inp.value = "";
-  };
+    im.src = u;
+  }
   box.append(lab, prev, line);
   if (!matchMedia("(pointer: coarse)").matches) {
     /* on a computer with no camera: scan the code with the phone, take the photo there, it goes to Mr. Dilshod */
@@ -630,14 +641,14 @@ function stamp() { var d = new Date(), p = function (n) { return String(n).padSt
 /* letters of any language stay in file names; old browsers without \p{} get a simpler rule instead of breaking the whole lesson */
 var SAFE_RE = (function () { try { return new RegExp("[^\\p{L}\\p{N} .,'-]", "gu"); } catch (e) { return /[^A-Za-z0-9\u00C0-\u024F\u02BB\u02BC\u0400-\u04FF .,'-]/g; } })();
 function safe(s) { return String(s).replace(/[\\/:*?"<>|]/g, " ").replace(SAFE_RE, "").replace(/\s+/g, " ").trim(); }
-function sendVoice(blob, where, line) {
+function sendVoice(blob, where, line, done) {
   if (!collectUrl()) return;
   line.hidden = false; line.textContent = "Sending to Mr. Dilshod…";
   var fr = new FileReader();
   fr.onload = function () {
     var given = /\.([a-zA-Z0-9]{2,5})$/.exec(blob.name || ""), mime = (blob.type || (given ? "application/octet-stream" : "audio/webm")).split(";")[0], ext = given ? given[1].toLowerCase() : mime.indexOf("jpeg") > -1 ? "jpg" : mime.indexOf("mp4") > -1 ? "m4a" : "webm";
     outbox.push({ data: { kind: "voice", lesson: LESSON.number, name: safe(st.name) || "No name", file: safe(st.name) + " - " + safe(where) + " - " + stamp() + "." + ext, mime: mime, audio: String(fr.result).split(",")[1] },
-      ok: function () { line.textContent = "✓ Sent to Mr. Dilshod"; }, fail: function () { line.textContent = "No internet. It will be sent when you are back online."; } });
+      ok: function () { line.textContent = "✓ Sent to Mr. Dilshod"; if (done) done(); }, fail: function () { line.textContent = "No internet. It will be sent when you are back online."; } });
     flush();
   };
   fr.readAsDataURL(blob);
@@ -826,7 +837,7 @@ function endScreen() {
   hw.appendChild(el("p", "", E.extra));
   box.appendChild(el("p", "prep", "Homework done? Open this lesson again and send a photo."));
   var ws = el("div", "ws");
-  box.appendChild(blockPhoto({ task: "Homework", button: "📷 Send a photo of my homework", optional: true }, "hw", { update: function () { worksheetBox(ws); } }));
+  box.appendChild(blockPhoto({ task: "Homework", button: "📷 Send photos of my homework", optional: true, pages: true }, "hw", { update: function () { worksheetBox(ws); } }));
   box.appendChild(ws); worksheetBox(ws);
   box.appendChild(el("p", null, "Next lesson: <span class='en'>" + esc(E.next) + "</span><br><span class='soft'>" + esc(E.nextNote) + "</span>"));
   box.appendChild(el("p", "credit", "Ⓓ English · by Mr. Dilshod"));
@@ -911,11 +922,34 @@ var APPS_SCRIPT = [
 "  if (r + 1 > sh.getMaxRows()) sh.insertRowsAfter(sh.getMaxRows(), 50);",
 "  put_(sh, r + 1, row, skip);",
 "}",
+"function findRow_(sh, name, lesson) {",
+"  var last = sh.getLastRow(); if (last < 2) return 0;",
+"  var v = sh.getRange(2, 2, last - 1, 2).getValues();",
+"  for (var i = v.length - 1; i >= 0; i--) if (key_(v[i][0]) === key_(name) && key_(v[i][1]) === key_(lesson)) return i + 2;",
+"  return 0;",
+"}",
+"function links_(cell) {",
+"  var f = cell.getFormula(), m = f && /HYPERLINK\\(\"([^\"]+)\"/i.exec(f);",
+"  if (m) return [m[1]];",
+"  var out = [], rt = cell.getRichTextValue();",
+"  if (rt) rt.getRuns().forEach(function (x) { var u = x.getLinkUrl(); if (u && out.indexOf(u) < 0) out.push(u); });",
+"  return out;",
+"}",
+"function setLinks_(cell, urls) {",
+"  var parts = urls.map(function (u, i) { return 'Page ' + (i + 1); }), b = SpreadsheetApp.newRichTextValue().setText(parts.join(' · ')), at = 0;",
+"  urls.forEach(function (u, i) { b.setLinkUrl(at, at + parts[i].length, u); at += parts[i].length + 3; });",
+"  cell.setValue(''); cell.setRichTextValue(b.build());",
+"}",
 "function logFile_(root, d, file) {",
 "  var ss = results_(root), task = taskOf_(d), photo = String(d.mime).indexOf('image/') === 0, url = file.getUrl();",
 "  if (task === 'Homework') {",
-"    var hw = tab_(ss, 'Homework', ['Time', 'Name', 'Lesson', 'Photo', 'Tries']);",
-"    upsert_(hw, [2, 3], [new Date(), d.name, d.lesson, '=HYPERLINK(\"' + url + '\",\"Open photo\")', ''], 5);",
+"    /* every homework photo is kept: one row per student and lesson, with a link for each page */",
+"    var hw = tab_(ss, 'Homework', ['Time', 'Name', 'Lesson', 'Photos', 'Pages']), r = findRow_(hw, d.name, d.lesson);",
+"    if (!r) { r = Math.max(hw.getLastRow(), 1) + 1; hw.getRange(r, 2, 1, 2).setValues([[d.name, d.lesson]]); }",
+"    var cell = hw.getRange(r, 4), urls = links_(cell);",
+"    if (urls.indexOf(url) < 0) urls.push(url);",
+"    setLinks_(cell, urls); hw.getRange(r, 1).setValue(new Date()); hw.getRange(r, 5).setValue(urls.length);",
+"    hw.getRange(1, 4, 1, 2).setValues([['Photos', 'Pages']]);",
 "  } else {",
 "    /* recordings and notebook photos have a tab each */",
 "    var rp = photo ? tab_(ss, 'Photos', ['Time', 'Name', 'Lesson', 'Task', 'Photo', 'Tries']) : tab_(ss, 'Recordings', ['Time', 'Name', 'Lesson', 'Task', 'Recording', 'Tries']);",
@@ -963,7 +997,6 @@ var APPS_SCRIPT = [
 "  });",
 "  tidy_(ss.getSheetByName('Recordings'), [2, 3, 4], 6);",
 "  tidy_(ss.getSheetByName('Photos'), [2, 3, 4], 6);",
-"  tidy_(ss.getSheetByName('Homework'), [2, 3], 5);",
 "  tidy_(ss.getSheetByName('Results'), [2, 4], 8, function (old, row) { return +row[4] >= +old[4]; }, function (r) { if (typeof r[0] === 'string') r[0] = when_(r[0]); }, 7);",
 "}",
 "function tidy_(sh, keys, triesCol, keepBest, fix, skip) {",
