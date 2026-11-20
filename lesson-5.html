@@ -840,7 +840,7 @@ function endScreen() {
   box.appendChild(blockPhoto({ task: "Homework", button: "📷 Send photos of my homework", optional: true, pages: true }, "hw", { update: function () { worksheetBox(ws); } }));
   box.appendChild(ws); worksheetBox(ws);
   box.appendChild(el("p", null, "Next lesson: <span class='en'>" + esc(E.next) + "</span><br><span class='soft'>" + esc(E.nextNote) + "</span>"));
-  box.appendChild(el("p", "credit", "Ⓓ English · by Mr. Dilshod"));
+  box.appendChild(el("p", "credit", "Ⓓ English by Mr. Dilshod"));
   return box;
 }
 
