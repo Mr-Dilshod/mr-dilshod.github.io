@@ -830,7 +830,7 @@ function endScreen() {
   if (collectUrl()) { var sl = el("p", "sent", st.sent ? "✓ Sent to Mr. Dilshod" : "Sending to Mr. Dilshod…"); sl.id = "result-line"; box.appendChild(sl); }
   else if (!PREVIEW) box.appendChild(el("p", "task", "&#128248; Take a screenshot of this result and send it to our group."));
   /* 50% or less: no homework and no worksheet yet; the student does the lesson again (the best try counts in the sheet) */
-  if (!PREVIEW && sc.total && sc.right * 2 <= sc.total) {
+  if (sc.total && sc.right * 2 <= sc.total) {
     box.appendChild(el("div", "warnbox", "🔁 <b>50% or less.</b> Do the lesson again carefully. Then your homework and the worksheet open."));
     var redo = el("button", "btn", "🔁 Do the lesson again"); redo.type = "button";
     redo.onclick = function () { st = { name: st.name, lang: st.lang, i: 0, r: {}, c: {} }; save(); if (wantFs) fsEnter(); show(); };
