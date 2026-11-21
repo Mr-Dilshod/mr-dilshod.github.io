@@ -825,10 +825,19 @@ function endScreen() {
   var MON = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], h12 = d.getHours() % 12 || 12;
   var when = MON[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + ", " + h12 + ":" + String(d.getMinutes()).padStart(2, "0") + (d.getHours() < 12 ? " AM" : " PM");
   var c = el("div", "score");
-  c.append(el("span", "k", "Lesson " + LESSON.number + " result"), el("b", null, esc(st.name)), el("b", "big", sc.right + " / " + sc.total), el("span", null, "right on the first try"), el("span", "task", sc.right >= sc.total * .9 ? "🥇 Gold medal!" : sc.right >= sc.total * .7 ? "🥈 Silver medal!" : "🥉 Bronze medal. You finished it!"), el("span", "soft", when));
+  c.append(el("span", "k", "Lesson " + LESSON.number + " result"), el("b", null, esc(st.name)), el("b", "big", sc.right + " / " + sc.total), el("span", null, "right on the first try"), el("span", "task", sc.right >= sc.total * .9 ? "🥇 Gold medal!" : sc.right >= sc.total * .7 ? "🥈 Silver medal!" : sc.right * 2 > sc.total ? "🥉 Bronze medal. You finished it!" : "🔁 Not yet. Try again!"), el("span", "soft", when));
   box.appendChild(c);
   if (collectUrl()) { var sl = el("p", "sent", st.sent ? "✓ Sent to Mr. Dilshod" : "Sending to Mr. Dilshod…"); sl.id = "result-line"; box.appendChild(sl); }
   else if (!PREVIEW) box.appendChild(el("p", "task", "&#128248; Take a screenshot of this result and send it to our group."));
+  /* 50% or less: no homework and no worksheet yet; the student does the lesson again (the best try counts in the sheet) */
+  if (!PREVIEW && sc.total && sc.right * 2 <= sc.total) {
+    box.appendChild(el("div", "warnbox", "🔁 <b>50% or less.</b> Do the lesson again carefully. Then your homework and the worksheet open."));
+    var redo = el("button", "btn", "🔁 Do the lesson again"); redo.type = "button";
+    redo.onclick = function () { st = { name: st.name, lang: st.lang, i: 0, r: {}, c: {} }; save(); if (wantFs) fsEnter(); show(); };
+    box.appendChild(redo);
+    box.appendChild(el("p", "credit", "Ⓓ English by Mr. Dilshod"));
+    return box;
+  }
   var hw = el("div", "hw", "<span class='k'>Homework</span><p>" + E.homework + "</p>"); box.appendChild(hw);
   /* the Workbook page itself, so the homework can be done even without the book */
   (E.pics || []).forEach(function (n) { if (!IMG[n]) return; var im = el("img", "pic hwpic"); im.src = IMG[n]; im.alt = "Homework from the Workbook"; hw.appendChild(im); });
