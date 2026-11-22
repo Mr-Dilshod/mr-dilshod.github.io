@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-22d">
+<meta name="ver" content="2026-11-22e">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -228,7 +228,7 @@ const SHEETS = [
     tip: "Слово похоже на русское, но значит другое! Не верьте глазам — проверяйте значение.",
     q: "Что значит это слово?",
     items: [
-      { w: "magazine", opts: ["магазин", "журнал", "склад"], r: "журнал", why: "magazine — журнал. А магазин — <b>shop</b>." },
+      { w: "magazine", opts: ["магазин", "журнал", "склад"], r: "журнал", why: "magazine — журнал. А магазин — <b>store</b>." },
       { w: "family", opts: ["фамилия", "семья", "фамильярный"], r: "семья", why: "family — семья. А фамилия — <b>surname</b>." },
       { w: "list", opts: ["лист", "список", "лиса"], r: "список", why: "list — список. А лист бумаги — <b>a sheet of paper</b>." },
       { w: "box", opts: ["бокс", "коробка", "бокал"], r: "коробка", why: "box — коробка. А бокс — <b>boxing</b>." },
@@ -271,29 +271,29 @@ const SHEETS = [
       { s: "Be {quite|*quiet}, please! The baby is sleeping.", why: "<b>quiet</b> (кваЙэт) — тихий. <b>quite</b> (квайт) — довольно." },
       { s: "The film was {*quite|quiet} good.", why: "<b>quite</b> — довольно, весьма." },
       { s: "My brother is taller {then|*than} me.", why: "<b>than</b> — чем. <b>then</b> — потом." },
-      { s: "We had lunch and {*then|than} we played football.", why: "<b>then</b> — потом." },
-      { s: "{*Which|Witch} colour do you like?", why: "<b>which</b> — который. <b>witch</b> — ведьма. Звучат одинаково!" },
+      { s: "We had lunch and {*then|than} we played soccer.", why: "<b>then</b> — потом." },
+      { s: "{*Which|Witch} color do you like?", why: "<b>which</b> — который. <b>witch</b> — ведьма. Звучат одинаково!" },
       { s: "He walked {though|*through} the park.", why: "<b>through</b> (сру) — через. <b>though</b> (зоу) — хотя." }
     ] },
   { title: "Читаем текст", type: "text",
     tip: "Нажмите на предложение, чтобы его послушать. Красные слова — ложные друзья: нажмите, чтобы узнать значение. Потом прочитайте текст вслух сами и ответьте на вопросы.",
     lines: [
       "Sam is twelve.",
-      "On Saturday, his [[family]] goes to the shop.",
-      "Sam's mum has a [[list]]: bread, milk and a [[magazine]] for Dad.",
-      "Dad likes books, too. He is reading a long [[novel]].",
+      "On Saturday, his [[family]] goes to the store.",
+      "Sam's dad has a [[list]]: bread, milk and a [[magazine]] for Grandpa.",
+      "Grandpa likes books, too. He is reading a long [[novel]].",
       "At home, Sam puts the [[magazine]] in a big [[box]] under the [[cabinet]].",
-      "“Be quiet!” says Mum. “Grandma is sleeping.”",
+      "“Be quiet!” says Dad. “Grandma is sleeping.”",
       "Sam is quiet. He reads the [[magazine]]. It is quite interesting!"
     ],
     gloss: { family: "семья", list: "список", magazine: "журнал", novel: "роман", box: "коробка", cabinet: "шкаф" },
     q: "",
     items: [
-      { q: "Who goes to the shop?", opts: ["Sam's family", "Sam's teacher", "Sam's dog"], r: "Sam's family", why: "family — семья: «his family goes to the shop»." },
-      { q: "What is on Mum's list?", opts: ["bread, milk and a magazine", "a novel and a box", "fabric and a cabinet"], r: "bread, milk and a magazine", why: "«bread, milk and a magazine for Dad»." },
-      { q: "What is Dad reading?", opts: ["a long novel", "a short story", "a list"], r: "a long novel", why: "novel — роман, длинная книга." },
-      { q: "Where does Sam put the magazine?", opts: ["in a box under the cabinet", "in the shop", "on Grandma's bed"], r: "in a box under the cabinet", why: "box — коробка, cabinet — шкаф." },
-      { q: "Why must Sam be quiet?", opts: ["Grandma is sleeping.", "Dad is reading.", "The shop is closed."], r: "Grandma is sleeping.", why: "«Be quiet! Grandma is sleeping.»" },
+      { q: "Who goes to the store?", opts: ["Sam's family", "Sam's teacher", "Sam's dog"], r: "Sam's family", why: "family — семья: «his family goes to the store»." },
+      { q: "What is on Dad's list?", opts: ["bread, milk and a magazine", "a novel and a box", "fabric and a cabinet"], r: "bread, milk and a magazine", why: "«bread, milk and a magazine for Grandpa»." },
+      { q: "What is Grandpa reading?", opts: ["a long novel", "a short story", "a list"], r: "a long novel", why: "novel — роман, длинная книга." },
+      { q: "Where does Sam put the magazine?", opts: ["in a box under the cabinet", "in the store", "on Grandma's bed"], r: "in a box under the cabinet", why: "box — коробка, cabinet — шкаф." },
+      { q: "Why must Sam be quiet?", opts: ["Grandma is sleeping.", "Grandpa is reading.", "The store is closed."], r: "Grandma is sleeping.", why: "«Be quiet! Grandma is sleeping.»" },
       { q: "The magazine is…", opts: ["quite interesting", "quiet interesting", "very boring"], r: "quite interesting", why: "quite — довольно: quite interesting — довольно интересный." }
     ] }
 ];

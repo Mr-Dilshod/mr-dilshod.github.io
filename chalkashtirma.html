@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-22d">
+<meta name="ver" content="2026-11-22e">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -234,7 +234,7 @@ const SHEETS = [
       { w: "pull", opts: ["pul", "tortmoq", "puflamoq"], r: "tortmoq", why: "pull — tortmoq (eshikda: PULL — torting). Pul esa <b>money</b>." },
       { w: "dam", opts: ["dam olish", "toʻgʻon", "nafas"], r: "toʻgʻon", why: "dam — toʻgʻon (suv toʻsiladigan joy). Dam olish esa <b>rest</b>." },
       { w: "tag", opts: ["tag (pastki qism)", "yorliq", "tog"], r: "yorliq", why: "tag — yorliq (kiyimdagi narx qogʻozchasi). Oʻzbekcha «tag» esa <b>bottom</b>." },
-      { w: "magazine", opts: ["magazin (doʻkon)", "jurnal", "ombor"], r: "jurnal", why: "magazine — jurnal. Magazin (doʻkon) esa <b>shop</b>." },
+      { w: "magazine", opts: ["magazin (doʻkon)", "jurnal", "ombor"], r: "jurnal", why: "magazine — jurnal. Magazin (doʻkon) esa <b>store</b>." },
       { w: "family", opts: ["familiya", "oila", "tanish"], r: "oila", why: "family — oila. Familiya esa <b>surname</b>." },
       { w: "cabinet", opts: ["kabinet (xona)", "javon", "kabina"], r: "javon", why: "cabinet — javon, tokcha. Kabinet (ish xonasi) esa <b>office</b>." },
       { w: "fabric", opts: ["fabrika", "mato", "boʻyoq"], r: "mato", why: "fabric — mato, gazlama. Fabrika esa <b>factory</b>." },
@@ -271,29 +271,29 @@ const SHEETS = [
       { s: "Be {quite|*quiet}, please! The baby is sleeping.", why: "<b>quiet</b> (kvayət) — jim. <b>quite</b> (kvayt) — ancha." },
       { s: "The film was {*quite|quiet} good.", why: "<b>quite</b> — ancha, juda." },
       { s: "My brother is taller {then|*than} me.", why: "<b>than</b> — -dan (qiyoslashda). <b>then</b> — keyin." },
-      { s: "We had lunch and {*then|than} we played football.", why: "<b>then</b> — keyin." },
-      { s: "{*Which|Witch} colour do you like?", why: "<b>which</b> — qaysi. <b>witch</b> — jodugar. Ikkalasi bir xil eshitiladi!" },
+      { s: "We had lunch and {*then|than} we played soccer.", why: "<b>then</b> — keyin." },
+      { s: "{*Which|Witch} color do you like?", why: "<b>which</b> — qaysi. <b>witch</b> — jodugar. Ikkalasi bir xil eshitiladi!" },
       { s: "He walked {though|*through} the park.", why: "<b>through</b> (sru) — orqali. <b>though</b> (zou) — garchi." }
     ] },
   { title: "Matn oʻqiymiz", type: "text",
     tip: "Gapni tinglash uchun ustiga bosing. Qizil soʻzlar soxta doʻstlar: maʼnosini bilish uchun bosing. Keyin matnni oʻzingiz ovoz chiqarib oʻqing va savollarga javob bering.",
     lines: [
       "Sam is twelve.",
-      "On Saturday, his [[family]] goes to the shop.",
-      "Sam's mum has a list: bread, milk and a [[magazine]] for Dad.",
-      "Dad likes books, too. He is reading a long novel.",
+      "On Saturday, his [[family]] goes to the store.",
+      "Sam's dad has a list: bread, milk and a [[magazine]] for Grandpa.",
+      "Grandpa likes books, too. He is reading a long novel.",
       "At home, Sam puts the [[magazine]] in a big [[box]] [[on]] the [[cabinet]].",
-      "“Be quiet!” says Mum. “Grandma is sleeping.”",
+      "“Be quiet!” says Dad. “Grandma is sleeping.”",
       "Sam is quiet. He reads the [[magazine]]. It is quite interesting!"
     ],
     gloss: { family: "oila", magazine: "jurnal", box: "quti", on: "ustida", cabinet: "javon" },
     q: "",
     items: [
-      { q: "Who goes to the shop?", opts: ["Sam's family", "Sam's teacher", "Sam's dog"], r: "Sam's family", why: "family — oila: «his family goes to the shop»." },
-      { q: "What is on Mum's list?", opts: ["bread, milk and a magazine", "a novel and a box", "fabric and a cabinet"], r: "bread, milk and a magazine", why: "«bread, milk and a magazine for Dad»." },
-      { q: "What is Dad reading?", opts: ["a long novel", "a short story", "a list"], r: "a long novel", why: "novel — roman, uzun kitob." },
-      { q: "Where does Sam put the magazine?", opts: ["in a box on the cabinet", "in the shop", "on Grandma's bed"], r: "in a box on the cabinet", why: "box — quti, on — ustida, cabinet — javon." },
-      { q: "Why must Sam be quiet?", opts: ["Grandma is sleeping.", "Dad is reading.", "The shop is closed."], r: "Grandma is sleeping.", why: "«Be quiet! Grandma is sleeping.»" },
+      { q: "Who goes to the store?", opts: ["Sam's family", "Sam's teacher", "Sam's dog"], r: "Sam's family", why: "family — oila: «his family goes to the store»." },
+      { q: "What is on Dad's list?", opts: ["bread, milk and a magazine", "a novel and a box", "fabric and a cabinet"], r: "bread, milk and a magazine", why: "«bread, milk and a magazine for Grandpa»." },
+      { q: "What is Grandpa reading?", opts: ["a long novel", "a short story", "a list"], r: "a long novel", why: "novel — roman, uzun kitob." },
+      { q: "Where does Sam put the magazine?", opts: ["in a box on the cabinet", "in the store", "on Grandma's bed"], r: "in a box on the cabinet", why: "box — quti, on — ustida, cabinet — javon." },
+      { q: "Why must Sam be quiet?", opts: ["Grandma is sleeping.", "Grandpa is reading.", "The store is closed."], r: "Grandma is sleeping.", why: "«Be quiet! Grandma is sleeping.»" },
       { q: "The magazine is…", opts: ["quite interesting", "quiet interesting", "very boring"], r: "quite interesting", why: "quite — ancha: quite interesting — ancha qiziqarli." }
     ] }
 ];
