@@ -837,6 +837,7 @@ function endScreen() {
     redo.onclick = function () { st = { name: st.name, lang: st.lang, i: 0, r: {}, c: {} }; save(); if (wantFs) fsEnter(); show(); };
     box.appendChild(redo);
     box.appendChild(el("p", "prep", "Get more than 50%, and your homework and the worksheet open."));
+    var wl0 = wordList(); if (wl0) box.appendChild(wl0);
     box.appendChild(el("p", "credit", "Ⓓ English by Mr. Dilshod"));
     return box;
   }
@@ -850,6 +851,7 @@ function endScreen() {
   var ws = el("div", "ws");
   box.appendChild(blockPhoto({ task: "Homework", button: "📷 Send photos of my homework", optional: true, pages: true }, "hw", { update: function () { worksheetBox(ws); } }));
   box.appendChild(ws); worksheetBox(ws);
+  var wl = wordList(); if (wl) box.appendChild(wl);
   box.appendChild(el("p", null, "Next lesson: <span class='en'>" + esc(E.next) + "</span><br><span class='soft'>" + esc(E.nextNote) + "</span>"));
   box.appendChild(el("p", "credit", "Ⓓ English by Mr. Dilshod"));
   return box;
@@ -1146,6 +1148,131 @@ function openStudio() {
   });
 }
 window.addEventListener("beforeunload", function (e) { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- tap a purple word: hear it and see what it means ----------
+   LESSON.words = { "pencil": { uz: "qalam", ru: "карандаш", tg: "қалам" }, "24th July": { say: "the twenty-fourth of July", uz: ..., ru: ..., tg: ... } }
+   Every <span class='en'> whose word (or phrase) is in LESSON.words gets a dotted line and can be tapped.
+   When the purple part is only a piece of a word (Ju<span class='en'>ly</span>), the whole word is looked up. */
+var WORDS = {};
+function wkey(s) { return String(s).replace(/[‘’]/g, "'").replace(/\.\.\.|…/g, " ").replace(/[.?!,:;]+\s*$/, "").replace(/\s+/g, " ").trim().toLowerCase(); }
+Object.keys(LESSON.words || {}).forEach(function (k) { WORDS[wkey(k)] = LESSON.words[k]; });
+function wfind(t) { var k = wkey(t); if (WORDS[k]) return k; k = k.replace(/-/g, ""); return WORDS[k] ? k : null; }
+function wfull(sp) {
+  var LT = /[A-Za-z'’-]/, a = "", b = "", p = sp.previousSibling, n = sp.nextSibling, s, i;
+  if (p && p.nodeType === 3) { s = p.textContent; i = s.length; while (i > 0 && LT.test(s.charAt(i - 1))) i--; a = s.slice(i); }
+  if (n && n.nodeType === 3) { s = n.textContent; i = 0; while (i < s.length && LT.test(s.charAt(i))) i++; b = s.slice(0, i); }
+  return (a + sp.textContent + b).replace(/^-+|-+$/g, "");
+}
+function wtag(scope) {
+  if (!scope || !scope.querySelectorAll || !Object.keys(WORDS).length) return;
+  Array.prototype.forEach.call(scope.querySelectorAll(".en:not(.tw):not([data-wn])"), function (sp) {
+    if (sp.closest("button,label,.pick,.wpop,#studio")) { sp.setAttribute("data-wn", "1"); return; }
+    var full = wfull(sp), k = wfind(full), shown = full;
+    if (!k) { k = wfind(sp.textContent); shown = sp.textContent; }
+    if (!k) { sp.setAttribute("data-wn", "1"); return; }
+    sp.classList.add("tw"); sp.setAttribute("data-wk", k); sp.setAttribute("data-wt", shown);
+    sp.setAttribute("role", "button"); sp.setAttribute("tabindex", "0");
+  });
+}
+(function () {
+  var s = document.createElement("style");
+  s.textContent = ".en.tw{cursor:pointer;text-decoration:underline dotted;text-decoration-thickness:2px;text-underline-offset:4px}" +
+    ".en.tw.on{background:rgba(118,44,133,.12);border-radius:4px}" +
+    ".wpop{position:absolute;z-index:8;width:max-content;max-width:min(340px,calc(100vw - 16px));min-width:200px;background:var(--card);color:var(--text);border:1.5px solid var(--goldtx);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:10px 12px 12px;display:grid;gap:8px;animation:rise .18s ease both}" +
+    ".wpop .wh{display:flex;align-items:center;gap:8px}.wpop .wh b{flex:1;min-width:0;font-size:21px;line-height:1.25;color:var(--goldtx);font-weight:800;overflow-wrap:anywhere}" +
+    ".wpop .wx{flex:none;background:none;border:0;font-size:18px;color:var(--soft);padding:6px 8px;min-height:40px}" +
+    ".wpop .wr{display:flex;gap:8px}.wpop .wr button{flex:1;min-width:0;min-height:46px;border-radius:10px;border:1.5px solid var(--goldtx);background:transparent;color:var(--goldtx);font-weight:800;font-size:16px;padding:6px 8px}" +
+    ".wpop .wr button.on{background:rgba(118,44,133,.12)}" +
+    ".wpop .wm2{font-size:18px;font-weight:700;line-height:1.4}.wpop .wm2:empty{display:none}" +
+    ".wlist{border-left:4px solid var(--goldtx);padding:4px 0 4px 14px;display:grid;gap:6px}.wrow{display:flex;flex-wrap:wrap;column-gap:10px;row-gap:2px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)}.wrow:last-child{border-bottom:0}.wrow .en{font-size:18px}.wmean{color:var(--soft);font-size:16px;font-weight:600;min-width:0}";
+  document.head.appendChild(s);
+})();
+var wv = [], wbox = null, wsp = null, wclip = null;
+function wvLoad() {
+  if (!("speechSynthesis" in window)) return;
+  wv = speechSynthesis.getVoices().filter(function (v) { return /^en/i.test(v.lang); }).sort(function (a, b) { return wrank(b) - wrank(a); });
+}
+function wrank(v) { return (/en[-_]GB/i.test(v.lang) ? 3 : /en[-_]US/i.test(v.lang) ? 2 : 1) + (/Google|Natural|Online/.test(v.name) ? 2 : 0); }
+if ("speechSynthesis" in window) { wvLoad(); try { speechSynthesis.addEventListener("voiceschanged", wvLoad); } catch (e) {} }
+function wsynth(text, slow, btn) {
+  if (!("speechSynthesis" in window) || !wv.length) { if (btn) btn.classList.remove("on"); return; }
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text); u.voice = wv[0]; u.lang = wv[0].lang; u.rate = slow ? 0.55 : 0.85;
+  u.onend = u.onerror = function () { if (btn) btn.classList.remove("on"); };
+  speechSynthesis.speak(u);
+}
+/* Google's voice first (clear on every phone); the phone's own English voice when there is no internet or Google fails */
+function wsay(text, slow, btn) {
+  text = String(text).replace(/\.\.\.|…/g, " ").replace(/\s+/g, " ").trim();
+  if (!text) return;
+  if (wclip) { wclip.onended = wclip.onerror = null; wclip.pause(); }
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  if (btn) btn.classList.add("on");
+  if (navigator.onLine === false) { wsynth(text, slow, btn); return; }
+  var a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-GB&q=" + encodeURIComponent(text));
+  wclip = a; a.playbackRate = slow ? 0.7 : 1;
+  a.onended = function () { if (btn) btn.classList.remove("on"); };
+  a.onerror = function () { if (wclip === a) wsynth(text, slow, btn); };
+  var p = a.play(); if (p && p.catch) p.catch(function () { if (wclip === a) wsynth(text, slow, btn); });
+}
+function wclose() {
+  if (wbox) { wbox.remove(); wbox = null; }
+  if (wsp) { wsp.classList.remove("on"); wsp = null; }
+}
+function wopen(sp) {
+  wclose();
+  var k = sp.getAttribute("data-wk"), d = WORDS[k]; if (!d) return;
+  var say = (typeof d === "object" && d.say) || sp.getAttribute("data-wt") || sp.textContent;
+  var mean = typeof d === "string" ? d : (d[st.lang || "uz"] || d.uz || "");
+  wsp = sp; sp.classList.add("on");
+  wbox = el("div", "wpop");
+  wbox.setAttribute("role", "dialog");
+  wbox.innerHTML = "<div class='wh'><b></b><button type='button' class='wx' aria-label='Close'>&#10005;</button></div>" +
+    "<div class='wr'><button type='button' class='w1'>&#128264; Listen</button><button type='button' class='w2'>&#128034; Slowly</button></div><p class='wm2'></p>";
+  wbox.querySelector(".wh b").textContent = say.replace(/\s+/g, " ").trim();
+  wbox.querySelector(".wm2").textContent = mean;
+  var b1 = wbox.querySelector(".w1"), b2 = wbox.querySelector(".w2");
+  b1.onclick = function () { wsay(say, false, b1); };
+  b2.onclick = function () { wsay(say, true, b2); };
+  wbox.querySelector(".wx").onclick = wclose;
+  document.body.appendChild(wbox);
+  var r = sp.getBoundingClientRect(), bw = wbox.offsetWidth, bh = wbox.offsetHeight;
+  var nav = document.getElementById("nav"), bottom = window.innerHeight - (nav ? nav.offsetHeight : 0) - 8;
+  var left = Math.min(Math.max(8, r.left + r.width / 2 - bw / 2), document.documentElement.clientWidth - bw - 8);
+  var top = r.bottom + 8; if (top + bh > bottom && r.top - bh - 8 > 60) top = r.top - bh - 8;
+  wbox.style.left = (left + window.scrollX) + "px"; wbox.style.top = (top + window.scrollY) + "px";
+  wsay(say, false, b1);
+}
+document.addEventListener("click", function (e) {
+  var sp = e.target && e.target.closest ? e.target.closest(".en.tw") : null;
+  if (sp) { if (sp === wsp) { wclose(); return; } wopen(sp); return; }
+  if (wbox && !wbox.contains(e.target)) wclose();
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") { wclose(); return; }
+  if ((e.key === "Enter" || e.key === " ") && e.target && e.target.classList && e.target.classList.contains("tw")) { e.preventDefault(); wopen(e.target); }
+});
+window.addEventListener("resize", wclose);
+if (window.MutationObserver) new MutationObserver(function (ms) {
+  ms.forEach(function (m) { Array.prototype.forEach.call(m.addedNodes, function (n) { if (n.nodeType === 1) { if (n.classList && n.classList.contains("en")) wtag(n.parentNode); else wtag(n); } }); });
+  if (wsp && !document.body.contains(wsp)) wclose();
+}).observe(document.body, { childList: true, subtree: true });
+wtag(document.body);
+/* the end screen: every word of the lesson, to write down and learn */
+function wordList() {
+  var keys = Object.keys(LESSON.words || {}); if (!keys.length) return null;
+  var box = el("div", "wlist"), lang = st.lang || "uz";
+  box.appendChild(el("span", "k", "&#128210; Words to learn"));
+  box.appendChild(el("p", "prep", "Write these words in your notebook and learn them. Tap a word to hear it."));
+  keys.forEach(function (k) {
+    var d = LESSON.words[k], row = el("div", "wrow"), sp = el("span", "en tw");
+    sp.textContent = k; sp.setAttribute("data-wk", wkey(k)); sp.setAttribute("data-wt", k); sp.setAttribute("role", "button"); sp.setAttribute("tabindex", "0");
+    row.appendChild(sp);
+    var m = el("span", "wmean"); m.textContent = typeof d === "string" ? d : (d[lang] || d.uz || ""); row.appendChild(m);
+    box.appendChild(row);
+  });
+  return box;
+}
 
 if (location.hash === "#studio") openStudio(); else if (location.hash === "#preview") startPreview(); else startScreen();
 } };
