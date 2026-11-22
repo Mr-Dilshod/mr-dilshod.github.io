@@ -1192,7 +1192,7 @@ function wvLoad() {
   if (!("speechSynthesis" in window)) return;
   wv = speechSynthesis.getVoices().filter(function (v) { return /^en/i.test(v.lang); }).sort(function (a, b) { return wrank(b) - wrank(a); });
 }
-function wrank(v) { return (/en[-_]GB/i.test(v.lang) ? 3 : /en[-_]US/i.test(v.lang) ? 2 : 1) + (/Google|Natural|Online/.test(v.name) ? 2 : 0); }
+function wrank(v) { return (/en[-_]US/i.test(v.lang) ? 3 : /en[-_]GB/i.test(v.lang) ? 2 : 1) + (/Google|Natural|Online/.test(v.name) ? 2 : 0); }
 if ("speechSynthesis" in window) { wvLoad(); try { speechSynthesis.addEventListener("voiceschanged", wvLoad); } catch (e) {} }
 function wsynth(text, slow, btn) {
   if (!("speechSynthesis" in window) || !wv.length) { if (btn) btn.classList.remove("on"); return; }
@@ -1209,7 +1209,7 @@ function wsay(text, slow, btn) {
   if ("speechSynthesis" in window) speechSynthesis.cancel();
   if (btn) btn.classList.add("on");
   if (navigator.onLine === false) { wsynth(text, slow, btn); return; }
-  var a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-GB&q=" + encodeURIComponent(text));
+  var a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=" + encodeURIComponent(text));
   wclip = a; a.playbackRate = slow ? 0.7 : 1;
   a.onended = function () { if (btn) btn.classList.remove("on"); };
   a.onerror = function () { if (wclip === a) wsynth(text, slow, btn); };
