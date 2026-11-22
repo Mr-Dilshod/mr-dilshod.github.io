@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-22b">
+<meta name="ver" content="2026-11-22c">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -222,16 +222,16 @@ const SHEETS = [
     steps: [
       { big: "👅 Язык!", text: "Этого звука нет ни в русском, ни в узбекском, ни в таджикском. Чуть-чуть высуньте кончик языка между зубами. Да, язык виден! Это нормально.", say: "" },
       { big: "think 🤔", text: "Язык между зубами, дуйте воздух, <b>без голоса</b>. Это глухой <b>th</b>: <span class='en'>think</span> — думать, <span class='en'>three</span> — три, <span class='en'>bath</span> — ванна.", say: "think" },
-      { big: "this 👉", text: "Язык там же, но <b>с голосом</b>. Положите руку на горло: оно дрожит. Это звонкий <b>th</b>: <span class='en'>this</span> — это, <span class='en'>the</span>, <span class='en'>mother</span> — мама.", say: "this" },
+      { big: "this 👉", text: "Язык там же, но <b>с голосом</b>. Положите руку на горло: оно дрожит. Это звонкий <b>th</b>: <span class='en'>this</span> — это, <span class='en'>the</span>, <span class='en'>father</span> — папа.", say: "this" },
       { big: "🚫 sink", text: "Не говорите «с». <span class='en'>think</span> — думать, а <span class='en'>sink</span> — раковина. Скажете «ай синк», и выйдет «я тону» 😄", say: "sink" },
       { big: "they 👫", text: "Не говорите «д» или «з». Не «зе» и не «дэй», а <span class='en'>the</span>, <span class='en'>they</span> — они: язык между зубами, с голосом.", say: "they" },
       { big: "Какой th?", text: "Маленькие слова-помощники — <b>звонкий</b>: <span class='en'>the, this, that, they, there, then, with</span>. Слова со смыслом чаще <b>глухие</b>: <span class='en'>think, three, thank, thumb, birthday</span>.", say: "" },
-      { big: "mother 👩", text: "В середине слова между гласными обычно <b>звонкий</b>: <span class='en'>mother</span>, <span class='en'>father</span>, <span class='en'>brother</span>. В конце слова обычно <b>глухой</b>: <span class='en'>mouth</span> — рот, <span class='en'>tooth</span> — зуб.", say: "mother" },
+      { big: "father 👨", text: "В середине слова между гласными обычно <b>звонкий</b>: <span class='en'>father</span>, <span class='en'>brother</span>, <span class='en'>weather</span> — погода. В конце слова обычно <b>глухой</b>: <span class='en'>mouth</span> — рот, <span class='en'>tooth</span> — зуб.", say: "father" },
       { big: "🙏 Thank you", text: "Самая частая ошибка: «сэнк ю». Правильно: язык между зубами, воздух — <span class='en'>thank you</span>. Скажите три раза!", say: "thank you" }
     ] },
   { title: "Слушай и повторяй", type: "tiles",
     tip: "Нажмите на слово, послушайте и повторите вслух. Язык между зубами на подсвеченных буквах. Первые восемь — глухой th, последние четыре — звонкий.",
-    words: [["think","🤔","th"],["three","3️⃣","th"],["thank","🙏","th"],["thumb","👍","th"],["Thursday","📅","Th"],["birthday","🎂","th"],["mouth","👄","th"],["tooth","🦷","th"],["this","👉","th"],["that","👈","th"],["mother","👩","th"],["brother","👦","th"]] },
+    words: [["think","🤔","th"],["three","3️⃣","th"],["thank","🙏","th"],["thumb","👍","th"],["Thursday","📅","Th"],["birthday","🎂","th"],["mouth","👄","th"],["tooth","🦷","th"],["this","👉","th"],["that","👈","th"],["father","👨","th"],["brother","👦","th"]] },
   { title: "TH или нет?", type: "listen",
     tip: "Нажмите на кнопку и послушайте. Какое слово вы услышали: с th или без? Ошиблись? Послушайте ещё раз и выберите снова.",
     items: [
@@ -247,7 +247,7 @@ const SHEETS = [
     tip: "Прочитайте вопрос и выберите правильный ответ. Скажите слова вслух и положите руку на горло.",
     items: [
       { q: "Где th глухой, без голоса?", opts: ["this", "three", "that"], r: "three", why: "<b>three</b> — глухой th, только воздух. <b>this</b> и <b>that</b> — звонкий." },
-      { q: "Где th звонкий, с голосом?", opts: ["think", "bath", "mother"], r: "mother", why: "<b>mother</b> — звонкий th в середине слова. <b>think</b> и <b>bath</b> — глухой." },
+      { q: "Где th звонкий, с голосом?", opts: ["think", "bath", "father"], r: "father", why: "<b>father</b> — звонкий th в середине слова. <b>think</b> и <b>bath</b> — глухой." },
       { q: "Какое слово значит «рот»?", opts: ["mouse", "mouth", "mouths"], r: "mouth", why: "<b>mouth</b> — рот. <b>mouse</b> — мышь, <b>mouths</b> — рты." },
       { q: "В каком слове язык между зубами?", opts: ["sun", "tub", "thumb"], r: "thumb", why: "<b>thumb</b> — большой палец. В <b>sun</b> и <b>tub</b> нет th." },
       { q: "Как сказать «спасибо»?", opts: ["sank you", "thank you", "tank you"], r: "thank you", why: "<b>thank you</b>. <b>sank</b> — утонул, <b>tank</b> — танк 😄" }
@@ -262,7 +262,7 @@ const SHEETS = [
     ] },
   { title: "Читаем вслух", type: "lines",
     tip: "Послушайте фразу, потом нажмите 🎙️, прочитайте её вслух и послушайте себя. На каждом th язык между зубами.",
-    lines: ["Thank you, thank you, thank you!", "This is my mother and that is my father.", "Thursday is my brother's birthday.", "I think there are three cats there.", "Three thin thieves think a thousand thoughts."] }
+    lines: ["Thank you, thank you, thank you!", "This is my father and that is my brother.", "Thursday is my brother's birthday.", "I think there are three cats there.", "Three thin thieves think a thousand thoughts."] }
 ];
 
 const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';

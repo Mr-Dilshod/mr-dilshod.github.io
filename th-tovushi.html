@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-22b">
+<meta name="ver" content="2026-11-22c">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -220,16 +220,16 @@ const SHEETS = [
     steps: [
       { big: "👅 Til!", text: "Bu tovush oʻzbek, rus va tojik tillarida yoʻq. Til uchini tishlar orasidan sal chiqaring. Ha, til koʻrinadi! Bu normal.", say: "" },
       { big: "think 🤔", text: "Til tishlar orasida, havo puflang, <b>ovozsiz</b>. Bu jarangsiz <b>th</b>: <span class='en'>think</span> — oʻylamoq, <span class='en'>three</span> — uch, <span class='en'>bath</span> — vanna.", say: "think" },
-      { big: "this 👉", text: "Til oʻsha joyda, lekin <b>ovoz bilan</b>. Qoʻlingizni tomogʻingizga qoʻying: u titraydi. Bu jarangli <b>th</b>: <span class='en'>this</span> — bu, <span class='en'>the</span>, <span class='en'>mother</span> — ona.", say: "this" },
+      { big: "this 👉", text: "Til oʻsha joyda, lekin <b>ovoz bilan</b>. Qoʻlingizni tomogʻingizga qoʻying: u titraydi. Bu jarangli <b>th</b>: <span class='en'>this</span> — bu, <span class='en'>the</span>, <span class='en'>father</span> — ota.", say: "this" },
       { big: "🚫 sink", text: "«S» demang. <span class='en'>think</span> — oʻylamoq, <span class='en'>sink</span> esa — rakovina. «Ay sink» desangiz, «men choʻkyapman» boʻlib chiqadi 😄", say: "sink" },
       { big: "they 👫", text: "«D» yoki «z» demang. «Ze» ham, «dey» ham emas: <span class='en'>the</span>, <span class='en'>they</span> — ular: til tishlar orasida, ovoz bilan.", say: "they" },
       { big: "Qaysi th?", text: "Kichik yordamchi soʻzlarda <b>jarangli</b>: <span class='en'>the, this, that, they, there, then, with</span>. Maʼnoli soʻzlarda koʻpincha <b>jarangsiz</b>: <span class='en'>think, three, thank, thumb, birthday</span>.", say: "" },
-      { big: "mother 👩", text: "Soʻz oʻrtasida, unlilar orasida odatda <b>jarangli</b>: <span class='en'>mother</span>, <span class='en'>father</span>, <span class='en'>brother</span>. Soʻz oxirida odatda <b>jarangsiz</b>: <span class='en'>mouth</span> — ogʻiz, <span class='en'>tooth</span> — tish.", say: "mother" },
+      { big: "father 👨", text: "Soʻz oʻrtasida, unlilar orasida odatda <b>jarangli</b>: <span class='en'>father</span>, <span class='en'>brother</span>, <span class='en'>weather</span> — ob-havo. Soʻz oxirida odatda <b>jarangsiz</b>: <span class='en'>mouth</span> — ogʻiz, <span class='en'>tooth</span> — tish.", say: "father" },
       { big: "🙏 Thank you", text: "Eng koʻp uchraydigan xato: «senk yu». Toʻgʻrisi: til tishlar orasida, havo — <span class='en'>thank you</span>. Uch marta ayting!", say: "thank you" }
     ] },
   { title: "Eshit va takrorla", type: "tiles",
     tip: "Soʻzni bosing, tinglang va ovoz chiqarib takrorlang. Rangli harflarda til tishlar orasida. Birinchi sakkiztasi jarangsiz th, oxirgi toʻrttasi jarangli.",
-    words: [["think","🤔","th"],["three","3️⃣","th"],["thank","🙏","th"],["thumb","👍","th"],["Thursday","📅","Th"],["birthday","🎂","th"],["mouth","👄","th"],["tooth","🦷","th"],["this","👉","th"],["that","👈","th"],["mother","👩","th"],["brother","👦","th"]] },
+    words: [["think","🤔","th"],["three","3️⃣","th"],["thank","🙏","th"],["thumb","👍","th"],["Thursday","📅","Th"],["birthday","🎂","th"],["mouth","👄","th"],["tooth","🦷","th"],["this","👉","th"],["that","👈","th"],["father","👨","th"],["brother","👦","th"]] },
   { title: "TH bormi?", type: "listen",
     tip: "Tugmani bosing va tinglang. Qaysi soʻzni eshitdingiz: th bilanmi yoki th siz? Xato boʻlsa, yana tinglab qayta tanlang.",
     items: [
@@ -245,7 +245,7 @@ const SHEETS = [
     tip: "Savolni oʻqing va toʻgʻri javobni tanlang. Soʻzlarni ovoz chiqarib ayting va qoʻlingizni tomogʻingizga qoʻying.",
     items: [
       { q: "Qayerda th jarangsiz, ovozsiz?", opts: ["this", "three", "that"], r: "three", why: "<b>three</b> — jarangsiz th, faqat havo. <b>this</b> va <b>that</b> — jarangli." },
-      { q: "Qayerda th jarangli, ovoz bilan?", opts: ["think", "bath", "mother"], r: "mother", why: "<b>mother</b> — soʻz oʻrtasida jarangli th. <b>think</b> va <b>bath</b> — jarangsiz." },
+      { q: "Qayerda th jarangli, ovoz bilan?", opts: ["think", "bath", "father"], r: "father", why: "<b>father</b> — soʻz oʻrtasida jarangli th. <b>think</b> va <b>bath</b> — jarangsiz." },
       { q: "Qaysi soʻz «ogʻiz» degani?", opts: ["mouse", "mouth", "mouths"], r: "mouth", why: "<b>mouth</b> — ogʻiz. <b>mouse</b> — sichqon, <b>mouths</b> — ogʻizlar." },
       { q: "Qaysi soʻzda til tishlar orasida?", opts: ["sun", "tub", "thumb"], r: "thumb", why: "<b>thumb</b> — bosh barmoq. <b>sun</b> va <b>tub</b> da th yoʻq." },
       { q: "«Rahmat» qanday aytiladi?", opts: ["sank you", "thank you", "tank you"], r: "thank you", why: "<b>thank you</b>. <b>sank</b> — choʻkdi, <b>tank</b> — tank 😄" }
@@ -260,7 +260,7 @@ const SHEETS = [
     ] },
   { title: "Ovoz bilan oʻqing", type: "lines",
     tip: "Gapni tinglang, keyin 🎙️ ni bosing, ovoz chiqarib oʻqing va oʻzingizni tinglang. Har bir th da til tishlar orasida.",
-    lines: ["Thank you, thank you, thank you!", "This is my mother and that is my father.", "Thursday is my brother's birthday.", "I think there are three cats there.", "Three thin thieves think a thousand thoughts."] }
+    lines: ["Thank you, thank you, thank you!", "This is my father and that is my brother.", "Thursday is my brother's birthday.", "I think there are three cats there.", "Three thin thieves think a thousand thoughts."] }
 ];
 
 const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
