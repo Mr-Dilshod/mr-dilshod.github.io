@@ -669,6 +669,26 @@ function fsEnter() { var d = document.documentElement, f = d.requestFullscreen |
 var LANGS = [["uz", "Oʻzbekcha", "Uzbek", "text", ""], ["ru", "Русский", "Russian", "ru", "_ru"], ["tg", "Тоҷикӣ", "Tajik", "tg", "_tg"]];
 function langName() { var l = LANGS.filter(function (x) { return x[0] === st.lang; })[0]; return l ? l[2] : ""; }
 
+/* ---------- a lesson opens only after the previous one was passed (more than 50%) ---------- */
+var PASS_KEY = "dee-pass-";
+function passedHere(n) { try { return localStorage.getItem(PASS_KEY + n) === "1"; } catch (e) { return false; } }
+function markPassed(n) { try { localStorage.setItem(PASS_KEY + n, "1"); } catch (e) {} }
+var GATE_NOTES = {
+  lock: { en: "🔒 Lesson {n} opens after Lesson {p}. First finish Lesson {p} with more than 50%.", uz: "🔒 Avval Lesson {p} ni 50% dan yuqori natija bilan tugating, keyin Lesson {n} ochiladi.", ru: "🔒 Сначала пройдите Lesson {p} больше чем на 50%, потом откроется Lesson {n}.", tg: "🔒 Аввал Lesson {p}-ро бо натиҷаи зиёда аз 50% тамом кунед, баъд Lesson {n} кушода мешавад." },
+  name: { en: "Did Lesson {p} with your name written differently? Tell Mr. Dilshod.", uz: "Lesson {p} ni ismingizni boshqacha yozib oʻtgan boʻlsangiz, Mr. Dilshodga ayting.", ru: "Проходили Lesson {p} с другим написанием имени? Скажите Mr. Dilshod.", tg: "Агар Lesson {p}-ро бо номи дигар хел навишташуда гузашта бошед, ба Mr. Dilshod гӯед." },
+  net: { en: "📶 Connect to the internet so the lesson can check your Lesson {p}. Then press Start again.", uz: "📶 Internetga ulaning: dars Lesson {p} natijangizni tekshiradi. Keyin Start ni qayta bosing.", ru: "📶 Подключитесь к интернету: урок проверит ваш Lesson {p}. Потом снова нажмите Start.", tg: "📶 Ба интернет пайваст шавед: дарс натиҷаи Lesson {p}-ро месанҷад. Баъд Start-ро боз пахш кунед." }
+};
+function gateText(k) { var p = LESSON.number - 1; return (GATE_NOTES[k][st.lang || "en"] || GATE_NOTES[k].en).replace(/\{p\}/g, p).replace(/\{n\}/g, LESSON.number); }
+/* asks the teacher's Drive whether this name passed the lesson: yes, no, or null when it can't tell */
+function askPassed(name, n, done) {
+  var u = collectUrl(); if (!u) { done(true); return; }
+  var t = setTimeout(function () { t = null; done("net"); }, 20000);
+  fetch(u + "?check=1&lesson=" + n + "&name=" + encodeURIComponent(name) + "&t=" + Date.now()).then(function (r) { return r.text(); }).then(function (x) {
+    if (!t) return; clearTimeout(t); var j = null; try { j = JSON.parse(x); } catch (e) {}
+    done(j && typeof j.ok === "boolean" ? j.ok : "unknown"); /* an older Drive code can't answer: let the student in */
+  }, function () { if (!t) return; clearTimeout(t); done("net"); });
+}
+
 /* ---------- screens ---------- */
 var leave = [], tap = 0;
 function brand() { return "<span class='badge' aria-hidden='true'>D</span><span class='wm'>English</span>"; }
@@ -708,15 +728,32 @@ function startScreen() {
   var goText = go.textContent;
   var micNote = el("div", "warnbox"); micNote.hidden = true;
   function upd() {
+    if (gateBusy) return;
     go.disabled = !inp.value.trim() || !st.lang || micAsking; go.textContent = micAsking ? "Press Allow to turn on the microphone" : goText;
     var speaks = lessonSpeaks() && st.i < L.screens.length - 1, kind = !speaks ? "" : fromApp() ? "app" : inAppBrowser() && !micLive() ? (isIOS() ? "inappios" : "inapp") : micMissing() ? (isIOS() ? "safari" : "none") : micDenied ? "off" : "";
     micNote.hidden = !kind;
     if (kind) micNote.textContent = MIC_NOTES[kind][st.lang || "en"];
   }
   micWatch = upd;
-  inp.oninput = upd;
+  inp.oninput = function () { gateBox.hidden = true; go.classList.remove("alt"); upd(); };
   inp.onkeydown = function (e) { if (e.key === "Enter" && !go.disabled) go.click(); };
+  var gateBox = el("div", "warnbox"), gateBusy = false, gateOpen = false; gateBox.hidden = true;
   go.onclick = function () {
+    /* a new lesson (not started yet) opens only after the previous lesson was passed */
+    if (L.number > 1 && st.i < 0 && !PREVIEW && !gateOpen && collectUrl() && !passedHere(L.number - 1)) {
+      if (gateBusy) return; gateBusy = true; gateBox.hidden = true; go.disabled = true; go.textContent = "Checking Lesson " + (L.number - 1) + "…";
+      askPassed(inp.value.trim(), L.number - 1, function (ok) {
+        gateBusy = false; upd();
+        if (ok === true || ok === "unknown") { if (ok === true) markPassed(L.number - 1); gateOpen = true; go.onclick(); return; }
+        gateBox.innerHTML = ""; gateBox.hidden = false;
+        if (ok === "net") { gateBox.appendChild(el("p", null, esc(gateText("net")))); miss(); return; }
+        gateBox.appendChild(el("p", null, esc(gateText("lock"))));
+        var open = el("a", "btn", "Open Lesson " + (L.number - 1)); open.href = "https://mr-dilshod.github.io/lesson-" + (L.number - 1) + ".html"; open.style.cssText = "display:block;text-align:center;text-decoration:none;margin:10px 0"; gateBox.appendChild(open);
+        gateBox.appendChild(el("p", "soft", esc(gateText("name"))));
+        go.classList.add("alt"); miss();
+      });
+      return;
+    }
     st.name = inp.value.trim(); if (st.i < 0) st.i = 0; save(); wantFs = true;
     /* some phones show no prompt until the student taps: ask once more on this tap */
     if (lessonSpeaks() && st.i < L.screens.length - 1 && !micMissing() && !micLive() && !micAskedOnTap) {
@@ -728,7 +765,7 @@ function startScreen() {
   };
   a.append(logo, head, chips, el("p", "prep", "&#128211; Notebook and pen &nbsp;·&nbsp; &#127911; Sound on"), lab, lw, go);
   if (lessonSpeaks()) a.insertBefore(el("p", "prep", (micMissing() ? "" : "&#127897;&#65039; Press Allow for the microphone. ") + (collectUrl() ? "Your work goes to Mr. Dilshod." : "")), go);
-  a.insertBefore(micNote, go);
+  a.insertBefore(micNote, go); a.insertBefore(gateBox, go);
   if (st.i > 0) { var re = el("button", "linkbtn", "Start again from the beginning"); re.type = "button"; re.onclick = function () { st = { name: inp.value.trim(), lang: st.lang, i: -1, r: {}, c: {} }; save(); startScreen(); }; a.appendChild(re); }
   root.textContent = ""; root.appendChild(a);
   if (st.i < LESSON.screens.length - 1) askMic();
@@ -830,6 +867,7 @@ function endScreen() {
   if (collectUrl()) { var sl = el("p", "sent", st.sent ? "✓ Sent to Mr. Dilshod" : "Sending to Mr. Dilshod…"); sl.id = "result-line"; box.appendChild(sl); }
   else if (!PREVIEW) box.appendChild(el("p", "task", "&#128248; Take a screenshot of this result and send it to our group."));
   /* 50% or less: no homework and no worksheet yet; the student does the lesson again (the best try counts in the sheet) */
+  if (!PREVIEW && sc.total && sc.right * 2 > sc.total) markPassed(LESSON.number);
   if (sc.total && sc.right * 2 <= sc.total) {
     /* the screen's heading said "Well done": say it softly instead */
     var hd = document.querySelector("#app > div:first-child"); if (hd) hd.innerHTML = "<p class='eye'>Almost there</p><h2>One more try 💪</h2>";
@@ -1033,6 +1071,17 @@ var APPS_SCRIPT = [
 "    while (col.length < n) col.push(['']);",
 "    sh.getRange(2, c, n, 1).setValues(col);",
 "  }",
+"}",
+"",
+"/* The lesson asks here whether a student passed a lesson (more than 50%), before the next lesson opens.",
+"   The name is compared without capitals, dots or word order: \"KAMOLOVA .DINORA\" = \"Dinora Kamolova\". */",
+"function gateKey_(s) { return String(s || '').toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu, ' ').trim().split(' ').sort().join(' '); }",
+"function doGet(e) {",
+"  var p = (e && e.parameter) || {};",
+"  if (!p.check) return ContentService.createTextOutput('ok');",
+"  var rs = results_(folder_(null, ROOT)).getSheetByName('Results'), last = rs.getLastRow(), ok = false, want = gateKey_(p.name);",
+"  if (last >= 2) ok = rs.getRange(2, 2, last - 1, 5).getValues().some(function (r) { return String(r[2]) === String(p.lesson) && gateKey_(r[0]) === want && +r[4] > 0 && +r[3] * 2 > +r[4]; });",
+"  return ContentService.createTextOutput(JSON.stringify({ ok: ok })).setMimeType(ContentService.MimeType.JSON);",
 "}"
 ].join("\n");
 function collectPanel() {
