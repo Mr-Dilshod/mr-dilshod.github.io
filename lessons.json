@@ -77,6 +77,23 @@
           "url": "https://mr-dilshod.github.io/lesson-6.html"
         }
       ]
+    },
+    {
+      "name": "Unit 1",
+      "lessons": [
+        {
+          "number": 7,
+          "title": "Friends and Family",
+          "page": "Student's Book pp. 10–11",
+          "chips": [
+            "👨‍👩‍👧 Family words",
+            "🌳 A family tree",
+            "🎬 Families are fantastic!",
+            "👑 A famous family"
+          ],
+          "url": "https://mr-dilshod.github.io/lesson-7.html"
+        }
+      ]
     }
   ]
 }
