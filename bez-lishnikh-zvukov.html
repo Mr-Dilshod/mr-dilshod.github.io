@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-24a">
+<meta name="ver" content="2026-11-24b">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -169,7 +169,7 @@ footer .sig b{font:600 16px var(--mark);color:var(--ink)}
 .gap.filled{border-color:var(--ok);color:var(--ok)}
 .opt.right,.done{color:var(--ink)}
 .all{color:var(--accent)}
-@media (max-width:359px){.card .word{font-size:1.3rem;padding:4px 10px}}
+@media (max-width:359px){.card .word{font-size:1.3rem;padding:4px 10px}.tile{font-size:1.3rem}}
 </style>
 </head>
 <body>
@@ -179,7 +179,7 @@ footer .sig b{font:600 16px var(--mark);color:var(--ink)}
     <div class="hero"><div>
       <p class="eye">Learn to Read · Шаг 6</p>
       <h1>Без лишних звуков</h1>
-      <p class="lede"><b>six</b> — не «сикис», <b>own</b> — не «овен»! В <b>x</b> «кс» склеены, в <b>ow</b> нет «в».</p>
+      <p class="lede"><b>six</b> — не «сикис», <b>milk</b> — не «милик», <b>own</b> — не «овен», <b>two</b> — не «тво»! Читаем без лишних звуков.</p>
     </div><span class="ab" aria-hidden="true">x·ow</span>
     </div>
     <div class="speed">
@@ -221,36 +221,44 @@ const SHEETS = [
   { title: "Правило", type: "steps",
     tip: "Нажмите «Дальше», читайте и слушайте. На каждом слове хлопните в ладоши один раз.",
     steps: [
-      { big: "🙅 Лишний звук", text: "Иногда мы добавляем в слово звук, которого там нет: «сикис» вместо <span class='en'>six</span>, «овен» вместо <span class='en'>own</span>. Сегодня убираем лишние звуки!", say: "" },
+      { big: "🙅 Лишний звук", text: "Иногда мы добавляем в слово звук, которого там нет: «сикис» вместо <span class='en'>six</span>, «милик» вместо <span class='en'>milk</span>, «овен» вместо <span class='en'>own</span>, «тво» вместо <span class='en'>two</span>. Сегодня убираем лишние звуки!", say: "" },
       { big: "six 6️⃣", text: "Буква <b>x</b> — это два звука, <b>к</b> и <b>с</b>, но они <b>склеены</b>, гласной между ними нет. «Сикс», а не «сикис». <span class='en'>six</span> — шесть.", say: "six" },
-      { big: "👏 Один хлопок", text: "Хлопните в ладоши: <span class='en'>six</span> — один хлопок. Скажете «си-кис», получится два хлопка: значит, есть лишнее «и». <span class='en'>box</span>, <span class='en'>fox</span>, <span class='en'>Twix</span> — тоже один хлопок.", say: "box" },
-      { big: "Twix 🍫", text: "<b>tw</b> в начале слова тоже склеено: после <b>t</b> сразу <b>w</b>. Не «тувикс» и не «твикис»: <span class='en'>Twix</span>, <span class='en'>twelve</span> — двенадцать, <span class='en'>twin</span> — близнец.", say: "Twix" },
-      { big: "👄 W ≠ В", text: "<b>w</b> — это не «в»! В «в» зубы касаются губы. В <b>w</b> зубы губ не касаются: губы круглые, как для «у», и сразу раскрываются: <span class='en'>window</span> — окно, <span class='en'>we</span> — мы.", say: "window" },
-      { big: "own 🙋", text: "После гласной <b>w</b> вообще не отдельный звук: вместе с гласной она даёт один звук. <b>ow</b> здесь — «оу»: <span class='en'>own</span> — «оун», собственный. Скажете «овен», и получится <span class='en'>oven</span> — духовка 😄", say: "own" },
-      { big: "brown 🟤", text: "Иногда <b>ow</b> — это «ау»: <span class='en'>brown</span> — «браун», коричневый. Не «бравен»! <span class='en'>cow</span> — корова, <span class='en'>now</span> — сейчас, <span class='en'>down</span> — вниз.", say: "brown" },
-      { big: "«оу» или «ау»?", text: "«оу»: <span class='en'>own, snow, slow, show, yellow, window</span>. «ау»: <span class='en'>brown, cow, now, how, down, town</span>. Строгого правила нет: слушайте и запоминайте. Но звука <b>в</b> нет ни там, ни там!", say: "" }
+      { big: "👏 Один хлопок", text: "Хлопните в ладоши: <span class='en'>six</span> — один хлопок. Скажете «си-кис», получится два хлопка: значит, есть лишнее «и». <span class='en'>box</span>, <span class='en'>fox</span>, <span class='en'>Twix</span>, <span class='en'>next</span> — тоже один хлопок.", say: "Twix" },
+      { big: "milk 🥛", text: "Две согласные в конце слова тоже склеены: <span class='en'>milk</span> — молоко, не «милик». <span class='en'>film</span> — не «филим», <span class='en'>help</span> — помощь, не «хелип», <span class='en'>desk</span> — парта, не «десик». Один хлопок!", say: "milk" },
+      { big: "👄 W ≠ В", text: "<b>w</b> — это не «в»! В «в» зубы касаются губы. В <b>w</b> зубы губ не касаются: губы круглые, как для «у», и сразу раскрываются: <span class='en'>we</span> — мы, <span class='en'>window</span> — окно, <span class='en'>water</span> — вода, <span class='en'>week</span> — неделя.", say: "water" },
+      { big: "queen 👑", text: "<b>qu</b> — это «кw»: <b>к</b> и <b>w</b> с круглыми губами. Не «квин»: <span class='en'>queen</span> — королева, <span class='en'>quick</span> — быстрый, <span class='en'>question</span> — вопрос.", say: "queen" },
+      { big: "own 🙋", text: "После гласной <b>w</b> не отдельный звук: вместе с гласной она даёт один звук. <b>ow</b> здесь — «оу»: <span class='en'>own</span> — «оун», собственный. Скажете «овен», и получится <span class='en'>oven</span> — духовка 😄", say: "own" },
+      { big: "brown 🟤", text: "Иногда <b>ow</b> — это «ау»: <span class='en'>brown</span> — «браун», коричневый. Не «бравен»! <span class='en'>flower</span> — цветок, не «фловер». <span class='en'>cow</span> — корова, <span class='en'>now</span> — сейчас.", say: "flower" },
+      { big: "«оу» или «ау»?", text: "«оу»: <span class='en'>own, snow, slow, know, yellow, window, tomorrow</span>. «ау»: <span class='en'>brown, cow, now, how, town, flower, shower</span>. Строгого правила нет: слушайте и запоминайте. Но звука <b>в</b> нет ни там, ни там!", say: "" },
+      { big: "new 🆕", text: "<b>ew</b> — тоже один гласный звук: «ю» или «у». <span class='en'>new</span> — новый, не «нев». <span class='en'>few</span> — мало, не «фев». <span class='en'>knew</span> — знал.", say: "new" },
+      { big: "two 2️⃣", text: "Иногда <b>w</b> пишется, но <b>совсем не читается</b>: <span class='en'>two</span> — «ту», <span class='en'>who</span> — «ху», <span class='en'>write</span> — «райт», <span class='en'>wrong</span> — неправильный, <span class='en'>answer</span> — ответ, не «ансвер». Эти слова надо запомнить!", say: "two" }
     ] },
   { title: "Слушай и повторяй", type: "tiles",
-    tip: "Нажмите на слово, послушайте и повторите вслух. Смотрите на цветные буквы: x — «кс» вместе, ow — один гласный звук, без «в».",
-    words: [["six","6️⃣","x"],["box","📦","x"],["fox","🦊","x"],["taxi","🚕","x"],["Twix","🍫","Tw"],["next","➡️","x"],["own","🙋","ow"],["snow","❄️","ow"],["yellow","💛","ow"],["brown","🟤","ow"],["cow","🐄","ow"],["down","⬇️","ow"]] },
+    tip: "Нажмите на слово, послушайте и повторите вслух. В цветных буквах нет ни лишнего «и», ни «в». В two, write и answer w не читается совсем.",
+    words: [["six","6️⃣","x"],["box","📦","x"],["Twix","🍫","x"],["next","➡️","x"],["milk","🥛","lk"],["film","🎬","lm"],["help","🆘","lp"],["desk","🪑","sk"],["water","💧","w"],["window","🪟","w"],["queen","👑","qu"],["own","🙋","ow"],["snow","❄️","ow"],["yellow","💛","ow"],["brown","🟤","ow"],["flower","🌸","ow"],["new","🆕","ew"],["two","2️⃣","w"],["write","✍️","w"],["answer","💬","w"]] },
   { title: "Какое слово?", type: "listen",
     tip: "Нажмите на кнопку и послушайте. Какое слово вы услышали? Ошиблись? Послушайте ещё раз и выберите снова.",
     items: [
       { pair: ["own 🙋", "oven 🔥"], say: 0, why: "<b>own</b> — собственный, «оун», один слог. <b>oven</b> — духовка, два слога и «в»." },
       { pair: ["six 6️⃣", "sick 🤒"], say: 0, why: "<b>six</b> — шесть, в конце «кс». <b>sick</b> — больной, в конце только «к»." },
+      { pair: ["milk 🥛", "milky 🍼"], say: 0, why: "<b>milk</b> — молоко, один хлопок. <b>milky</b> — молочный, два хлопка. Скажете «милик», и будет похоже на второе!" },
       { pair: ["vest 🦺", "west 🧭"], say: 1, why: "<b>west</b> — запад, губы круглые, зубы не касаются. <b>vest</b> — жилет, зубы касаются губы." },
       { pair: ["wet 💦", "vet 🩺"], say: 0, why: "<b>wet</b> — мокрый. <b>vet</b> — ветеринар, со звуком «в»." },
       { pair: ["no 🙅", "now ⏰"], say: 1, why: "<b>now</b> — сейчас, «ау». <b>no</b> — нет, «оу»." },
+      { pair: ["tone 🎵", "town 🏘️"], say: 1, why: "<b>town</b> — городок, «ау». <b>tone</b> — тон, «оу». И там, и там нет «в»." },
       { pair: ["box 📦", "books 📚"], say: 0, why: "<b>box</b> — коробка, короткое «о» и «кс». <b>books</b> — книги." }
     ] },
   { title: "Сколько хлопков?", type: "choose",
     tip: "Прочитайте вопрос, скажите слово вслух и хлопните. Выберите правильный ответ.",
     items: [
       { q: "six — сколько хлопков?", opts: ["1", "2", "3"], r: "1", why: "<b>six</b> — один хлопок: «сикс». «Си-кис» — два хлопка, это ошибка." },
-      { q: "Twix — сколько хлопков?", opts: ["1", "2", "3"], r: "1", why: "<b>Twix</b> — один хлопок: tw и x склеены." },
+      { q: "Twix — сколько хлопков?", opts: ["1", "2", "3"], r: "1", why: "<b>Twix</b> — один хлопок, на одном дыхании, без «твикис»." },
+      { q: "milk — сколько хлопков?", opts: ["1", "2", "3"], r: "1", why: "<b>milk</b> — один хлопок. «Ми-лик» — два хлопка, это ошибка." },
+      { q: "film — сколько хлопков?", opts: ["1", "2", "3"], r: "1", why: "<b>film</b> — один хлопок. Не «фи-лим»." },
       { q: "Как читается w в слове own?", opts: ["как «в»", "вместе с o: «оу»", "«у» и «в» вместе"], r: "вместе с o: «оу»", why: "<b>own</b> — «оун». Здесь w не отдельный звук." },
-      { q: "В каком слове ow читается «ау»?", opts: ["snow", "brown", "yellow"], r: "brown", why: "<b>brown</b> — «браун». В <b>snow</b> и <b>yellow</b> — «оу»." },
-      { q: "В каком слове ow читается «оу»?", opts: ["cow", "now", "slow"], r: "slow", why: "<b>slow</b> — «слоу», медленный. В <b>cow</b> и <b>now</b> — «ау»." }
+      { q: "В каком слове ow читается «ау»?", opts: ["snow", "flower", "yellow"], r: "flower", why: "<b>flower</b> — «флауэ». В <b>snow</b> и <b>yellow</b> — «оу»." },
+      { q: "Как начинается queen?", opts: ["«кв»", "«кw»", "«к»"], r: "«кw»", why: "<b>queen</b> — «кwиин»: после к губы круглые, зубы не касаются." },
+      { q: "В каком слове w совсем не читается?", opts: ["twin", "two", "twelve"], r: "two", why: "<b>two</b> — «ту». В <b>twin</b> и <b>twelve</b> w слышно." }
     ] },
   { title: "Вставьте слово", type: "gap",
     tip: "Прочитайте предложение. Какое слово подходит по смыслу? Нажмите на него.",
@@ -258,11 +266,14 @@ const SHEETS = [
       { s: "I have {*six|sick} pencils.", why: "<b>six</b> — шесть. У меня шесть карандашей. <b>sick</b> — больной." },
       { s: "This is my {*own|oven} room.", why: "<b>own</b> — собственный. Это моя собственная комната. <b>oven</b> — духовка, в ней не живут 😄" },
       { s: "My dad's car is {*brown|brave}.", why: "<b>brown</b> — коричневый. Папина машина коричневая. <b>brave</b> — смелый." },
-      { s: "Look! It's {*snowing|knowing}!", why: "<b>snowing</b> — идёт снег. <b>knowing</b> — знание." }
+      { s: "Look! It's {*snowing|knowing}!", why: "<b>snowing</b> — идёт снег. <b>knowing</b> — знание." },
+      { s: "Let's watch a new {*film|filling}.", why: "<b>film</b> — фильм, один хлопок. <b>filling</b> — начинка." },
+      { s: "There's a red {*flower|floor} in the vase.", why: "<b>flower</b> — цветок. В вазе красный цветок. <b>floor</b> — пол." },
+      { s: "{*Write|White} your name, please.", why: "<b>write</b> — писать, w не читается: «райт». <b>white</b> — белый." }
     ] },
   { title: "Читаем вслух", type: "lines",
-    tip: "Послушайте фразу, потом нажмите 🎙️, прочитайте её вслух и послушайте себя. В x нет лишнего «и», в ow нет «в».",
-    lines: ["Six boxes and six foxes.", "I want a Twix now.", "This is my own window.", "The brown cow is slow.", "Snow is white, not yellow!"] }
+    tip: "Послушайте фразу, потом нажмите 🎙️, прочитайте её вслух и послушайте себя. Ни лишнего «и», ни «в», а в two и write w не читается.",
+    lines: ["Six boxes and six foxes.", "I want a Twix now.", "This is my own window.", "The brown cow is slow.", "Snow is white, not yellow!", "The queen drinks milk.", "Write the answer in two words.", "A new film every week."] }
 ];
 
 const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
@@ -509,7 +520,7 @@ function renderLines(S, box) {
     const card = el("div", "card");
     const row = el("div", "qrow"); row.append(el("span", "num", (i + 1) + "."));
     const lb = el("button", "word sentence", SPEAKER + "<span></span>"); lb.type = "button";
-    lb.lastChild.innerHTML = line.replace(/(x|ow|tw)/gi, "<b>$1</b>");
+    lb.lastChild.innerHTML = line.replace(/(x|ow|ew|qu|lk|lm)/gi, "<b>$1</b>");
     lb.addEventListener("click", () => speak(line, lb));
     row.append(lb); card.append(row);
     const ctr = el("div", "opts");

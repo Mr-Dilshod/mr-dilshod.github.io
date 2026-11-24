@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-24a">
+<meta name="ver" content="2026-11-24b">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -167,7 +167,7 @@ footer .sig b{font:600 16px var(--mark);color:var(--ink)}
 .note{border-color:var(--edge)}
 .opt.right,.done{color:var(--ink)}
 .all{color:var(--accent)}
-@media (max-width:359px){.card .word{font-size:1.3rem;padding:4px 10px}}
+@media (max-width:359px){.card .word{font-size:1.3rem;padding:4px 10px}.tile{font-size:1.3rem}}
 </style>
 </head>
 <body>
@@ -177,7 +177,7 @@ footer .sig b{font:600 16px var(--mark);color:var(--ink)}
     <div class="hero"><div>
       <p class="eye">Learn to Read · 6-qadam</p>
       <h1>Ortiqcha tovush yoʻq</h1>
-      <p class="lede"><b>six</b> — «sikis» emas, <b>own</b> — «oven» emas! <b>x</b> da «ks» yopishib turadi, <b>ow</b> da «v» yoʻq.</p>
+      <p class="lede"><b>six</b> — «sikis» emas, <b>milk</b> — «milik» emas, <b>own</b> — «oven» emas, <b>two</b> — «tvo» emas! Ortiqcha tovushlarsiz oʻqiymiz.</p>
     </div><span class="ab" aria-hidden="true">x·ow</span>
     </div>
     <div class="speed">
@@ -219,36 +219,44 @@ const SHEETS = [
   { title: "Qoida", type: "steps",
     tip: "«Keyingisi»ni bosing, oʻqing va tinglang. Har bir soʻzda qoʻlingizni bir marta chapak qiling.",
     steps: [
-      { big: "🙅 Ortiqcha tovush", text: "Baʼzan soʻzga yoʻq tovushni qoʻshib yuboramiz: <span class='en'>six</span> oʻrniga «sikis», <span class='en'>own</span> oʻrniga «oven». Bugun ortiqcha tovushlarni olib tashlaymiz!", say: "" },
+      { big: "🙅 Ortiqcha tovush", text: "Baʼzan soʻzga yoʻq tovushni qoʻshib yuboramiz: <span class='en'>six</span> oʻrniga «sikis», <span class='en'>milk</span> oʻrniga «milik», <span class='en'>own</span> oʻrniga «oven», <span class='en'>two</span> oʻrniga «tvo». Bugun ortiqcha tovushlarni olib tashlaymiz!", say: "" },
       { big: "six 6️⃣", text: "<b>x</b> harfi ikki tovush: <b>k</b> va <b>s</b>, lekin ular <b>yopishib</b> turadi, orasida unli yoʻq. «Siks», «sikis» emas. <span class='en'>six</span> — olti.", say: "six" },
-      { big: "👏 Bitta chapak", text: "Qoʻlingizni chapak qiling: <span class='en'>six</span> — bitta chapak. «Si-kis» desangiz, ikki chapak chiqadi: demak, ortiqcha «i» bor. <span class='en'>box</span>, <span class='en'>fox</span>, <span class='en'>Twix</span> — hammasi bitta chapak.", say: "box" },
-      { big: "Twix 🍫", text: "Soʻz boshidagi <b>tw</b> ham yopishib turadi: <b>t</b> dan keyin darrov <b>w</b>. «Tuviks» ham, «tvikis» ham emas: <span class='en'>Twix</span>, <span class='en'>twelve</span> — oʻn ikki, <span class='en'>twin</span> — egizak.", say: "Twix" },
-      { big: "👄 W ≠ V", text: "<b>w</b> «v» emas! «V» da tish labga tegadi. <b>w</b> da tish tegmaydi: lablar «u» deyotgandek yumaloq boʻladi, keyin ochiladi: <span class='en'>window</span> — deraza, <span class='en'>we</span> — biz.", say: "window" },
-      { big: "own 🙋", text: "Unlidan keyingi <b>w</b> umuman tovush emas: u unli bilan birga bitta tovush boʻladi. <b>ow</b> bu yerda «ou»: <span class='en'>own</span> — «oun», oʻzimning. «Oven» desangiz, <span class='en'>oven</span> — duxovka boʻlib qoladi 😄", say: "own" },
-      { big: "brown 🟤", text: "<b>ow</b> baʼzan «au» boʻladi: <span class='en'>brown</span> — «braun», jigarrang. «Braven» emas! <span class='en'>cow</span> — sigir, <span class='en'>now</span> — hozir, <span class='en'>down</span> — pastga.", say: "brown" },
-      { big: "«ou» yoki «au»?", text: "«ou»: <span class='en'>own, snow, slow, show, yellow, window</span>. «au»: <span class='en'>brown, cow, now, how, down, town</span>. Qatʼiy qoida yoʻq: tinglang va eslab qoling. Lekin ikkalasida ham <b>v</b> yoʻq!", say: "" }
+      { big: "👏 Bitta chapak", text: "Qoʻlingizni chapak qiling: <span class='en'>six</span> — bitta chapak. «Si-kis» desangiz, ikki chapak chiqadi: demak, ortiqcha «i» bor. <span class='en'>box</span>, <span class='en'>fox</span>, <span class='en'>Twix</span>, <span class='en'>next</span> — hammasi bitta chapak.", say: "Twix" },
+      { big: "milk 🥛", text: "Soʻz oxiridagi ikki undosh ham yopishib turadi: <span class='en'>milk</span> — sut, «milik» emas. <span class='en'>film</span> — «filim» emas, <span class='en'>help</span> — yordam, «helip» emas, <span class='en'>desk</span> — parta, «desik» emas. Bitta chapak!", say: "milk" },
+      { big: "👄 W ≠ V", text: "<b>w</b> «v» emas! «V» da tish labga tegadi. <b>w</b> da tish tegmaydi: lablar «u» deyotgandek yumaloq boʻladi, keyin ochiladi: <span class='en'>we</span> — biz, <span class='en'>window</span> — deraza, <span class='en'>water</span> — suv, <span class='en'>week</span> — hafta.", say: "water" },
+      { big: "queen 👑", text: "<b>qu</b> bu «kw»: <b>k</b> va yumaloq lablar bilan <b>w</b>. «Kvin» emas: <span class='en'>queen</span> — qirolicha, <span class='en'>quick</span> — tez, <span class='en'>question</span> — savol.", say: "queen" },
+      { big: "own 🙋", text: "Unlidan keyingi <b>w</b> alohida tovush emas: u unli bilan birga bitta tovush boʻladi. <b>ow</b> bu yerda «ou»: <span class='en'>own</span> — «oun», oʻzimning. «Oven» desangiz, <span class='en'>oven</span> — duxovka boʻlib qoladi 😄", say: "own" },
+      { big: "brown 🟤", text: "<b>ow</b> baʼzan «au» boʻladi: <span class='en'>brown</span> — «braun», jigarrang. «Braven» emas! <span class='en'>flower</span> — gul, «flover» emas. <span class='en'>cow</span> — sigir, <span class='en'>now</span> — hozir.", say: "flower" },
+      { big: "«ou» yoki «au»?", text: "«ou»: <span class='en'>own, snow, slow, know, yellow, window, tomorrow</span>. «au»: <span class='en'>brown, cow, now, how, town, flower, shower</span>. Qatʼiy qoida yoʻq: tinglang va eslab qoling. Lekin ikkalasida ham <b>v</b> yoʻq!", say: "" },
+      { big: "new 🆕", text: "<b>ew</b> ham bitta unli: «yu» yoki «u». <span class='en'>new</span> — yangi, «nev» emas. <span class='en'>few</span> — oz, «fev» emas. <span class='en'>knew</span> — bilardi.", say: "new" },
+      { big: "two 2️⃣", text: "Baʼzan <b>w</b> yoziladi, lekin <b>umuman oʻqilmaydi</b>: <span class='en'>two</span> — «tu», <span class='en'>who</span> — «hu», <span class='en'>write</span> — «rayt», <span class='en'>wrong</span> — notoʻgʻri, <span class='en'>answer</span> — javob, «ansver» emas. Bu soʻzlarni yod oling!", say: "two" }
     ] },
   { title: "Eshit va takrorla", type: "tiles",
-    tip: "Soʻzni bosing, tinglang va ovoz chiqarib takrorlang. Rangli harflarga eʼtibor bering: x — «ks» birga, ow — bitta unli, «v» siz.",
-    words: [["six","6️⃣","x"],["box","📦","x"],["fox","🦊","x"],["taxi","🚕","x"],["Twix","🍫","Tw"],["next","➡️","x"],["own","🙋","ow"],["snow","❄️","ow"],["yellow","💛","ow"],["brown","🟤","ow"],["cow","🐄","ow"],["down","⬇️","ow"]] },
+    tip: "Soʻzni bosing, tinglang va ovoz chiqarib takrorlang. Rangli harflarda ortiqcha «i» ham, «v» ham yoʻq. two, write va answer da w umuman oʻqilmaydi.",
+    words: [["six","6️⃣","x"],["box","📦","x"],["Twix","🍫","x"],["next","➡️","x"],["milk","🥛","lk"],["film","🎬","lm"],["help","🆘","lp"],["desk","🪑","sk"],["water","💧","w"],["window","🪟","w"],["queen","👑","qu"],["own","🙋","ow"],["snow","❄️","ow"],["yellow","💛","ow"],["brown","🟤","ow"],["flower","🌸","ow"],["new","🆕","ew"],["two","2️⃣","w"],["write","✍️","w"],["answer","💬","w"]] },
   { title: "Qaysi soʻz?", type: "listen",
     tip: "Tugmani bosing va tinglang. Qaysi soʻzni eshitdingiz? Xato boʻlsa, yana tinglab qayta tanlang.",
     items: [
       { pair: ["own 🙋", "oven 🔥"], say: 0, why: "<b>own</b> — oʻzimning, «oun», bitta boʻgʻin. <b>oven</b> — duxovka, ikki boʻgʻin va «v»." },
       { pair: ["six 6️⃣", "sick 🤒"], say: 0, why: "<b>six</b> — olti, oxirida «ks». <b>sick</b> — kasal, oxirida faqat «k»." },
+      { pair: ["milk 🥛", "milky 🍼"], say: 0, why: "<b>milk</b> — sut, bitta chapak. <b>milky</b> — sutli, ikki chapak. «Milik» desangiz, ikkinchisiga oʻxshab qoladi!" },
       { pair: ["vest 🦺", "west 🧭"], say: 1, why: "<b>west</b> — gʻarb, lablar yumaloq, tish tegmaydi. <b>vest</b> — jilet, tish labga tegadi." },
       { pair: ["wet 💦", "vet 🩺"], say: 0, why: "<b>wet</b> — hoʻl. <b>vet</b> — veterinar, «v» bilan." },
       { pair: ["no 🙅", "now ⏰"], say: 1, why: "<b>now</b> — hozir, «au». <b>no</b> — yoʻq, «ou»." },
+      { pair: ["tone 🎵", "town 🏘️"], say: 1, why: "<b>town</b> — shaharcha, «au». <b>tone</b> — ohang, «ou». Ikkalasida ham «v» yoʻq." },
       { pair: ["box 📦", "books 📚"], say: 0, why: "<b>box</b> — quti, qisqa «o» va «ks». <b>books</b> — kitoblar." }
     ] },
   { title: "Nechta chapak?", type: "choose",
     tip: "Savolni oʻqing, soʻzni ovoz chiqarib ayting va chapak qiling. Toʻgʻri javobni tanlang.",
     items: [
       { q: "six — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>six</b> — bitta chapak: «siks». «Si-kis» — ikki chapak, bu xato." },
-      { q: "Twix — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>Twix</b> — bitta chapak: tw va x yopishib turadi." },
+      { q: "Twix — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>Twix</b> — bitta chapak: bir nafasda, «twikis» emas." },
+      { q: "milk — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>milk</b> — bitta chapak. «Mi-lik» — ikki chapak, bu xato." },
+      { q: "film — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>film</b> — bitta chapak. «Fi-lim» emas." },
       { q: "own soʻzida w qanday oʻqiladi?", opts: ["«v» kabi", "o bilan birga «ou»", "«u» va «v» birga"], r: "o bilan birga «ou»", why: "<b>own</b> — «oun». w bu yerda alohida tovush emas." },
-      { q: "Qaysi soʻzda ow «au» deb oʻqiladi?", opts: ["snow", "brown", "yellow"], r: "brown", why: "<b>brown</b> — «braun». <b>snow</b> va <b>yellow</b> da «ou»." },
-      { q: "Qaysi soʻzda ow «ou» deb oʻqiladi?", opts: ["cow", "now", "slow"], r: "slow", why: "<b>slow</b> — «slou», sekin. <b>cow</b> va <b>now</b> da «au»." }
+      { q: "Qaysi soʻzda ow «au» deb oʻqiladi?", opts: ["snow", "flower", "yellow"], r: "flower", why: "<b>flower</b> — «flauə». <b>snow</b> va <b>yellow</b> da «ou»." },
+      { q: "queen qanday boshlanadi?", opts: ["«kv»", "«kw»", "«k»"], r: "«kw»", why: "<b>queen</b> — «kwiin»: k dan keyin lablar yumaloq, tish tegmaydi." },
+      { q: "Qaysi soʻzda w umuman oʻqilmaydi?", opts: ["twin", "two", "twelve"], r: "two", why: "<b>two</b> — «tu». <b>twin</b> va <b>twelve</b> da w eshitiladi." }
     ] },
   { title: "Boʻshliqqa qoʻying", type: "gap",
     tip: "Gapni oʻqing. Maʼnosiga qaysi soʻz mos keladi? Ustiga bosing.",
@@ -256,11 +264,14 @@ const SHEETS = [
       { s: "I have {*six|sick} pencils.", why: "<b>six</b> — olti. Menda oltita qalam bor. <b>sick</b> — kasal." },
       { s: "This is my {*own|oven} room.", why: "<b>own</b> — oʻzimning. Bu mening oʻz xonam. <b>oven</b> — duxovka, unda yashamaymiz 😄" },
       { s: "My dad's car is {*brown|brave}.", why: "<b>brown</b> — jigarrang. Dadamning mashinasi jigarrang. <b>brave</b> — jasur." },
-      { s: "Look! It's {*snowing|knowing}!", why: "<b>snowing</b> — qor yogʻyapti. <b>knowing</b> — bilish." }
+      { s: "Look! It's {*snowing|knowing}!", why: "<b>snowing</b> — qor yogʻyapti. <b>knowing</b> — bilish." },
+      { s: "Let's watch a new {*film|filling}.", why: "<b>film</b> — film, bitta chapak. <b>filling</b> — ichki qism (masalan, pirogniki)." },
+      { s: "There's a red {*flower|floor} in the vase.", why: "<b>flower</b> — gul. Guldonda qizil gul bor. <b>floor</b> — pol." },
+      { s: "{*Write|White} your name, please.", why: "<b>write</b> — yozmoq, w oʻqilmaydi: «rayt». <b>white</b> — oq." }
     ] },
   { title: "Ovoz bilan oʻqing", type: "lines",
-    tip: "Gapni tinglang, keyin 🎙️ ni bosing, ovoz chiqarib oʻqing va oʻzingizni tinglang. x da ortiqcha «i» yoʻq, ow da «v» yoʻq.",
-    lines: ["Six boxes and six foxes.", "I want a Twix now.", "This is my own window.", "The brown cow is slow.", "Snow is white, not yellow!"] }
+    tip: "Gapni tinglang, keyin 🎙️ ni bosing, ovoz chiqarib oʻqing va oʻzingizni tinglang. Ortiqcha «i» yoʻq, «v» yoʻq, two va write da w oʻqilmaydi.",
+    lines: ["Six boxes and six foxes.", "I want a Twix now.", "This is my own window.", "The brown cow is slow.", "Snow is white, not yellow!", "The queen drinks milk.", "Write the answer in two words.", "A new film every week."] }
 ];
 
 const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
@@ -505,7 +516,7 @@ function renderLines(S, box) {
     const card = el("div", "card");
     const row = el("div", "qrow"); row.append(el("span", "num", (i + 1) + "."));
     const lb = el("button", "word sentence", SPEAKER + "<span></span>"); lb.type = "button";
-    lb.lastChild.innerHTML = line.replace(/(x|ow|tw)/gi, "<b>$1</b>");
+    lb.lastChild.innerHTML = line.replace(/(x|ow|ew|qu|lk|lm)/gi, "<b>$1</b>");
     lb.addEventListener("click", () => speak(line, lb));
     row.append(lb); card.append(row);
     const ctr = el("div", "opts");
