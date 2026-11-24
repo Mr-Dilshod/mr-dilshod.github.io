@@ -425,10 +425,51 @@ function blockWrite(b, id, scr) {
   if (st.r[id]) { go.hidden = true; if (b.model) model.hidden = false; }
   box.append(go, row, warn, list, fin, sentLine); if (b.model) box.appendChild(model); scr.need(id, false); return box;
 }
+/* ---------- is the photo really from the camera, just now? facts for the Check column in Mr. Dilshod's sheet ---------- */
+function exifCam(f, done) {
+  /* reads the camera name and the time the photo was taken from a JPEG (AI pictures and screenshots have none) */
+  if (!f || !f.slice || !window.FileReader || !window.DataView) { done(null); return; }
+  var fr = new FileReader(), sent = false, end = function (x) { if (!sent) { sent = true; done(x); } };
+  fr.onload = function () {
+    try {
+      var v = new DataView(fr.result), o = 2;
+      if (v.getUint16(0) !== 0xFFD8) { end(null); return; }
+      while (o + 10 < v.byteLength) {
+        var m = v.getUint16(o), len = v.getUint16(o + 2);
+        if ((m & 0xFF00) !== 0xFF00) break;
+        if (m === 0xFFE1 && v.getUint32(o + 4) === 0x45786966) {
+          var t = o + 10, le = v.getUint16(t) === 0x4949, out = {};
+          var u16 = function (p) { return v.getUint16(t + p, le); }, u32 = function (p) { return v.getUint32(t + p, le); };
+          var str = function (p, n) { var s = ""; for (var i = 0; i < n && t + p + i < v.byteLength; i++) { var c = v.getUint8(t + p + i); if (!c) break; s += String.fromCharCode(c); } return s.trim(); };
+          var ifd = function (p, want) { var n = u16(p); for (var i = 0; i < n; i++) { var x = p + 2 + i * 12, tag = u16(x), cnt = u32(x + 4); if (want[tag]) out[want[tag]] = tag === 0x8769 ? u32(x + 8) : str(cnt > 4 ? u32(x + 8) : x + 8, cnt); } };
+          ifd(u32(4), { 0x010F: "make", 0x0110: "model", 0x8769: "exif" });
+          if (out.exif) ifd(out.exif, { 0x9003: "taken" });
+          end(out); return;
+        }
+        o += 2 + len;
+      }
+    } catch (x) {}
+    end(null);
+  };
+  fr.onerror = function () { end(null); };
+  setTimeout(function () { end(null); }, 4000);
+  fr.readAsArrayBuffer(f.slice(0, 262144));
+}
+function photoNote(f, w, h, cam) {
+  var age = Math.round((Date.now() - (f.lastModified || Date.now())) / 60000), mk = cam && cam.make || "", md = cam && cam.model || "";
+  var who = md && mk && md.toLowerCase().indexOf(mk.toLowerCase()) < 0 ? mk + " " + md : md || mk;
+  var small = Math.max(w, h) <= 1536, old = age > 60, shot = !who && Math.max(w, h) / Math.min(w, h) > 1.9;
+  var parts = [who ? "📷 " + who : "no camera info", w + "×" + h, age <= 2 ? "taken just now" : age < 120 ? "file " + age + " min old" : age < 2880 ? "file " + Math.round(age / 60) + " h old" : "file " + Math.round(age / 1440) + " days old"];
+  if (shot) parts.push("screenshot?");
+  if (!who && (old || small || shot) || small && old) parts.unshift("⚠ check");
+  return parts.join(" · ");
+}
 function blockPhoto(b, id, scr) {
   /* A photo of notebook or Workbook work goes to the teacher's Drive. */
   var box = el("div", "block"), lab = el("label", "btn photo" + (st.r[id] ? " alt" : "")), inp = el("input"), prev = el("img", "thumb"), line = el("p", "sent");
   inp.type = "file"; inp.accept = "image/*"; inp.id = "photo-" + id.replace(/\W/g, "-");
+  /* on a phone the button opens the camera itself: a fresh photo of the notebook, not a picture from the gallery */
+  if (matchMedia("(pointer: coarse)").matches) inp.setAttribute("capture", "environment");
   /* homework can take several pages: choose them all at once, or add them one by one */
   var again = b.pages ? "📷 Add another page" : "📷 Take another photo", pages = function () { return +st.r[id + "#"] || (st.r[id] ? 1 : 0); };
   if (b.pages) inp.multiple = true;
@@ -440,6 +481,9 @@ function blockPhoto(b, id, scr) {
   };
   function next() {
     var f = queue.shift(); if (!f) return;
+    exifCam(f, function (cam) { shoot(f, cam); });
+  }
+  function shoot(f, cam) {
     var before = pages();
     var u = URL.createObjectURL(f), im = new Image();
     im.onerror = function () { line.hidden = false; line.textContent = "This picture can't be opened. Try again."; };
@@ -450,7 +494,7 @@ function blockPhoto(b, id, scr) {
         prev.src = c.toDataURL("image/jpeg", .6); prev.hidden = false; st.r[id] = "done"; save(); good(); lab.classList.add("alt"); var vp = box.querySelector(".qrbox .btn.alt"); if (vp) vp.hidden = true;
         lab.firstChild.textContent = again;
         if (b.pages) { st.r[id + "#"] = before + 1; save(); }
-        if (collectUrl()) sendVoice(blob, b.task || LESSON.screens[st.i].title, line, b.pages ? function () { line.textContent = "✓ Pages sent: " + pages() + ". Is there one more page? Add it."; } : null);
+        if (collectUrl()) sendVoice(blob, b.task || LESSON.screens[st.i].title, line, b.pages ? function () { line.textContent = "✓ Pages sent: " + pages() + ". Is there one more page? Add it."; } : null, photoNote(f, im.width, im.height, cam));
         else { line.hidden = false; line.textContent = b.pages ? "✓ Pages: " + pages() : "✓ Your photo is done."; }
         scr.update();
         setTimeout(next, 400);
@@ -641,13 +685,13 @@ function stamp() { var d = new Date(), p = function (n) { return String(n).padSt
 /* letters of any language stay in file names; old browsers without \p{} get a simpler rule instead of breaking the whole lesson */
 var SAFE_RE = (function () { try { return new RegExp("[^\\p{L}\\p{N} .,'-]", "gu"); } catch (e) { return /[^A-Za-z0-9\u00C0-\u024F\u02BB\u02BC\u0400-\u04FF .,'-]/g; } })();
 function safe(s) { return String(s).replace(/[\\/:*?"<>|]/g, " ").replace(SAFE_RE, "").replace(/\s+/g, " ").trim(); }
-function sendVoice(blob, where, line, done) {
+function sendVoice(blob, where, line, done, info) {
   if (!collectUrl()) return;
   line.hidden = false; line.textContent = "Sending to Mr. Dilshod…";
   var fr = new FileReader();
   fr.onload = function () {
     var given = /\.([a-zA-Z0-9]{2,5})$/.exec(blob.name || ""), mime = (blob.type || (given ? "application/octet-stream" : "audio/webm")).split(";")[0], ext = given ? given[1].toLowerCase() : mime.indexOf("jpeg") > -1 ? "jpg" : mime.indexOf("mp4") > -1 ? "m4a" : "webm";
-    outbox.push({ data: { kind: "voice", lesson: LESSON.number, name: safe(st.name) || "No name", file: safe(st.name) + " - " + safe(where) + " - " + stamp() + "." + ext, mime: mime, audio: String(fr.result).split(",")[1] },
+    outbox.push({ data: { kind: "voice", lesson: LESSON.number, name: safe(st.name) || "No name", file: safe(st.name) + " - " + safe(where) + " - " + stamp() + "." + ext, mime: mime, info: info || "", audio: String(fr.result).split(",")[1] },
       ok: function () { line.textContent = "✓ Sent to Mr. Dilshod"; if (done) done(); }, fail: function () { line.textContent = "No internet. It will be sent when you are back online."; } });
     flush();
   };
@@ -1000,11 +1044,16 @@ var APPS_SCRIPT = [
 "    var cell = hw.getRange(r, 4), urls = links_(cell);",
 "    if (urls.indexOf(url) < 0) urls.push(url);",
 "    setLinks_(cell, urls); hw.getRange(r, 1).setValue(new Date()); hw.getRange(r, 5).setValue(urls.length);",
-"    hw.getRange(1, 4, 1, 2).setValues([['Photos', 'Pages']]);",
+"    hw.getRange(1, 4, 1, 3).setValues([['Photos', 'Pages', 'Check']]);",
+"    /* Check: is each page a fresh camera photo? (camera name, size, how old the file was) */",
+"    if (d.info) { var ck = hw.getRange(r, 6), was = String(ck.getValue() || ''); ck.setValue((was ? was + '\\n' : '') + 'Page ' + urls.length + ': ' + d.info); }",
 "  } else {",
 "    /* recordings and notebook photos have a tab each */",
-"    var rp = photo ? tab_(ss, 'Photos', ['Time', 'Name', 'Lesson', 'Task', 'Photo', 'Tries']) : tab_(ss, 'Recordings', ['Time', 'Name', 'Lesson', 'Task', 'Recording', 'Tries']);",
-"    upsert_(rp, [2, 3, 4], [new Date(), d.name, d.lesson, task, '=HYPERLINK(\"' + url + '\",\"' + (photo ? 'Open photo' : 'Listen') + '\")', ''], 6);",
+"    var rp = photo ? tab_(ss, 'Photos', ['Time', 'Name', 'Lesson', 'Task', 'Photo', 'Tries', 'Check']) : tab_(ss, 'Recordings', ['Time', 'Name', 'Lesson', 'Task', 'Recording', 'Tries']);",
+"    var row = [new Date(), d.name, d.lesson, task, '=HYPERLINK(\"' + url + '\",\"' + (photo ? 'Open photo' : 'Listen') + '\")', ''];",
+"    /* Check: camera name, size and how old the file was; ⚠ check = maybe not a fresh notebook photo (AI picture, screenshot, old file) */",
+"    if (photo) { row.push(d.info || ''); if (rp.getRange(1, 7).getValue() !== 'Check') rp.getRange(1, 7).setValue('Check'); }",
+"    upsert_(rp, [2, 3, 4], row, 6);",
 "  }",
 "}",
 "function doPost(e) {",
@@ -1053,7 +1102,7 @@ var APPS_SCRIPT = [
 "function tidy_(sh, keys, triesCol, keepBest, fix, skip) {",
 "  if (!sh || sh.getLastRow() < 2) return;",
 "  sh.getRange(1, triesCol).setValue('Tries');",
-"  var n = sh.getLastRow() - 1, w = triesCol, rng = sh.getRange(2, 1, n, w), vals = rng.getValues(), forms = rng.getFormulas(), out = [], at = {};",
+"  var n = sh.getLastRow() - 1, w = Math.max(triesCol, sh.getLastColumn()), rng = sh.getRange(2, 1, n, w), vals = rng.getValues(), forms = rng.getFormulas(), out = [], at = {};",
 "  vals.forEach(function (v, i) {",
 "    if (String(v[1]).trim() === '') return;",
 "    var row = v.map(function (x, j) { return forms[i][j] || x; });",

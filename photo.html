@@ -62,8 +62,49 @@ label.btn input{display:none}
   $("who").textContent = (job.n ? job.n + ", t" : "T") + "ake a clear photo of your work. It goes to Mr. Dilshod.";
   function stamp() { var d = new Date(), p = function (n) { return String(n).padStart(2, "0"); }; return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + "-" + p(d.getMinutes()) + "-" + p(d.getSeconds()); }
   function safe(s) { return String(s || "").replace(/[\\/:*?"<>|]/g, " ").replace((function () { try { return new RegExp("[^\\p{L}\\p{N} .,'-]", "gu"); } catch (e) { return /[^A-Za-z0-9\u00C0-\u024F\u02BB\u02BC\u0400-\u04FF .,'-]/g; } })(), "").replace(/\s+/g, " ").trim(); }
+  function exifCam(f, done) {
+    /* reads the camera name and the time the photo was taken from a JPEG (AI pictures and screenshots have none) */
+    if (!f || !f.slice || !window.FileReader || !window.DataView) { done(null); return; }
+    var fr = new FileReader(), sent = false, end = function (x) { if (!sent) { sent = true; done(x); } };
+    fr.onload = function () {
+      try {
+        var v = new DataView(fr.result), o = 2;
+        if (v.getUint16(0) !== 0xFFD8) { end(null); return; }
+        while (o + 10 < v.byteLength) {
+          var m = v.getUint16(o), len = v.getUint16(o + 2);
+          if ((m & 0xFF00) !== 0xFF00) break;
+          if (m === 0xFFE1 && v.getUint32(o + 4) === 0x45786966) {
+            var t = o + 10, le = v.getUint16(t) === 0x4949, out = {};
+            var u16 = function (p) { return v.getUint16(t + p, le); }, u32 = function (p) { return v.getUint32(t + p, le); };
+            var str = function (p, n) { var s = ""; for (var i = 0; i < n && t + p + i < v.byteLength; i++) { var c = v.getUint8(t + p + i); if (!c) break; s += String.fromCharCode(c); } return s.trim(); };
+            var ifd = function (p, want) { var n = u16(p); for (var i = 0; i < n; i++) { var x = p + 2 + i * 12, tag = u16(x), cnt = u32(x + 4); if (want[tag]) out[want[tag]] = tag === 0x8769 ? u32(x + 8) : str(cnt > 4 ? u32(x + 8) : x + 8, cnt); } };
+            ifd(u32(4), { 0x010F: "make", 0x0110: "model", 0x8769: "exif" });
+            if (out.exif) ifd(out.exif, { 0x9003: "taken" });
+            end(out); return;
+          }
+          o += 2 + len;
+        }
+      } catch (x) {}
+      end(null);
+    };
+    fr.onerror = function () { end(null); };
+    setTimeout(function () { end(null); }, 4000);
+    fr.readAsArrayBuffer(f.slice(0, 262144));
+  }
+  function photoNote(f, w, h, cam) {
+    var age = Math.round((Date.now() - (f.lastModified || Date.now())) / 60000), mk = cam && cam.make || "", md = cam && cam.model || "";
+    var who = md && mk && md.toLowerCase().indexOf(mk.toLowerCase()) < 0 ? mk + " " + md : md || mk;
+    var small = Math.max(w, h) <= 1536, old = age > 60, shot = !who && Math.max(w, h) / Math.min(w, h) > 1.9;
+    var parts = [who ? "📷 " + who : "no camera info", w + "×" + h, age <= 2 ? "taken just now" : age < 120 ? "file " + age + " min old" : age < 2880 ? "file " + Math.round(age / 60) + " h old" : "file " + Math.round(age / 1440) + " days old"];
+    if (shot) parts.push("screenshot?");
+    if (!who && (old || small || shot) || small && old) parts.unshift("⚠ check");
+    return parts.join(" · ");
+  }
   function pick(inp) {
     var f = inp.files[0]; inp.value = ""; if (!f) return;
+    exifCam(f, function (cam) { shoot(f, cam); });
+  }
+  function shoot(f, cam) {
     var u = URL.createObjectURL(f), im = new Image(), line = $("sent");
     im.onerror = function () { line.hidden = false; line.className = "box bad"; line.textContent = "This picture can't be opened. Try again."; };
     im.onload = function () {
@@ -72,7 +113,7 @@ label.btn input{display:none}
       var data = c.toDataURL("image/jpeg", .8); $("prev").src = data; $("prev").hidden = false;
       $("take").hidden = true; $("more").hidden = false;
       line.hidden = false; line.className = "box ok"; line.textContent = "Sending to Mr. Dilshod…";
-      var body = { kind: "voice", id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), lesson: job.l, name: safe(job.n) || "No name", file: (safe(job.n) || "No name") + " - " + safe(job.t) + " - " + stamp() + ".jpg", mime: "image/jpeg", audio: data.split(",")[1] };
+      var body = { kind: "voice", id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), lesson: job.l, name: safe(job.n) || "No name", file: (safe(job.n) || "No name") + " - " + safe(job.t) + " - " + stamp() + ".jpg", mime: "image/jpeg", info: photoNote(f, im.width, im.height, cam), audio: data.split(",")[1] };
       fetch(job.u, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) })
         .then(function () { line.textContent = "✓ Sent to Mr. Dilshod. You can close this page."; },
               function () { line.className = "box bad"; line.textContent = "No internet. Connect and take the photo again."; $("take").hidden = false; $("more").hidden = true; });
