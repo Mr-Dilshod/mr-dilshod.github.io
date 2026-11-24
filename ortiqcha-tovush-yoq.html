@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="ver" content="2026-11-24a">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>6 qadam: Ortiqcha tovush yoʻq</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Manrope:wght@500;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;1,6..96,700&display=swap">
+<style>
+:root {
+  --bg: #e9f3f6; --tile: #ffffff; --ink: #16324a; --soft: #4b667a; --line: #bcd2dc;
+  --sound: #c93a22; --accent: #0a716c; --on-accent: #ffffff;
+  --glow: #ffc93c; --on-glow: #16324a; --ok: #0a716c; --okbg: #dff3ef; --no: #c93a22; --nobg: #fbe6e2;
+  --read: "Andika", "Segoe UI", Verdana, sans-serif;
+  --display: "Baloo 2", "Andika", "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10222f; --tile: #1b3446; --ink: #eaf3f7; --soft: #a9c0ce; --line: #34526a;
+    --sound: #ff8f76; --accent: #4fd1c5; --on-accent: #0c2029; --glow: #ffc93c; --on-glow: #16324a;
+    --ok: #4fd1c5; --okbg: #163f42; --no: #ff8f76; --nobg: #4a2723; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10222f; --tile: #1b3446; --ink: #eaf3f7; --soft: #a9c0ce; --line: #34526a;
+  --sound: #ff8f76; --accent: #4fd1c5; --on-accent: #0c2029; --glow: #ffc93c; --on-glow: #16324a;
+  --ok: #4fd1c5; --okbg: #163f42; --no: #ff8f76; --nobg: #4a2723; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { overflow-x: clip; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--read); font-size: 17px; line-height: 1.5; }
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: var(--ink); opacity: .08;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Ctext x='160' y='108' text-anchor='middle' transform='rotate(-24 160 100)' font-family='sans-serif' font-size='24' font-weight='700'%3E%E2%92%B9 English%3C/text%3E%3C/svg%3E") 0 0 / 320px 200px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Ctext x='160' y='108' text-anchor='middle' transform='rotate(-24 160 100)' font-family='sans-serif' font-size='24' font-weight='700'%3E%E2%92%B9 English%3C/text%3E%3C/svg%3E") 0 0 / 320px 200px;
+}
+.wrap {
+  position: relative; z-index: 1; max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px;
+  padding-block: 24px calc(48px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(1.5rem, 9vw, 3rem); line-height: 1.05; margin: 0; }
+.lede { margin: 4px 0 0; color: var(--soft); }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.speed { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.speed span, .speed label { color: var(--soft); font-size: .9rem; }
+.speed select { max-width: 200px; padding: 6px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--tile); }
+.pill { padding: 6px 14px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 999px; }
+.pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; }
+nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+nav button { position: relative; min-height: 46px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 10px; font-family: var(--display); font-weight: 800; font-size: 1.15rem; }
+nav button[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+nav button.full::after { content: "★"; position: absolute; top: 1px; right: 5px; font-size: .8rem; color: var(--glow); }
+h2 { font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.sheet-head { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; justify-content: space-between; }
+.count { color: var(--soft); font-variant-numeric: tabular-nums; }
+.tip { margin: 0; padding: 12px 16px; background: var(--glow); color: var(--on-glow); border-radius: 10px; font-weight: 700; }
+.tip b { color: #a3200b; }
+.note { margin: 0; padding: 12px 16px; border: 2px solid var(--sound); border-radius: 10px; }
+.items { display: grid; gap: 12px; }
+.card { display: grid; gap: 10px; padding: 14px; background: var(--tile); border: 1.5px solid var(--line); border-radius: 14px; min-width: 0; }
+.card.solved { border-color: var(--ok); }
+.qrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.num { color: var(--soft); font-variant-numeric: tabular-nums; font-size: .9rem; }
+.word { display: inline-flex; align-items: center; gap: 10px; padding: 4px 12px; border: 1.5px solid var(--line); border-bottom-width: 4px; border-radius: 12px; background: var(--tile); font-size: 1.9rem; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; min-width: 0; }
+.word.plain { cursor: default; border-bottom-width: 1.5px; }
+.word svg, .line svg, .say svg { flex: none; width: 22px; height: 22px; fill: var(--accent); }
+.q { margin: 0; font-size: 1.15rem; font-weight: 700; overflow-wrap: anywhere; }
+.sent { margin: 0; font-size: 1.3rem; overflow-wrap: anywhere; }
+.gap { display: inline-block; min-width: 3.2em; border-bottom: 3px solid var(--sound); text-align: center; color: var(--sound); font-weight: 700; }
+.gap.filled { border-color: var(--ok); color: var(--ok); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { min-height: 46px; padding: 8px 16px; border: 1.5px solid var(--line); border-bottom-width: 3px; border-radius: 10px; background: var(--tile); font-size: 1.15rem; overflow-wrap: anywhere; max-width: 100%; text-align: left; }
+.opt.right { background: var(--okbg); border-color: var(--ok); color: var(--ink); font-weight: 700; }
+.opt.wrong { background: var(--nobg); border-color: var(--no); text-decoration: line-through; opacity: .75; }
+.opt:disabled { cursor: default; }
+.fb { margin: 0; padding: 8px 12px; border-radius: 10px; font-size: 1rem; overflow-wrap: anywhere; }
+.fb.good { background: var(--okbg); }
+.fb.bad { background: var(--nobg); }
+.line { display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left; padding: 8px 10px; background: transparent; border: 1.5px solid transparent; border-radius: 10px; font-size: 1.25rem; cursor: pointer; overflow-wrap: anywhere; }
+.line.on, .word.on { background: var(--glow); border-color: var(--glow); color: var(--on-glow); }
+.line.on svg, .word.on svg { fill: var(--on-glow); }
+.line svg { margin-top: 6px; }
+.say { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 8px 16px; border: 0; border-radius: 10px; background: var(--accent); color: var(--on-accent); font-weight: 700; max-width: 100%; }
+.say svg { fill: var(--on-accent); }
+.say.rec { background: var(--sound); }
+.done { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--okbg); border: 2px solid var(--ok); font-weight: 700; overflow-wrap: anywhere; }
+.pager { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pager button { min-height: 46px; padding: 8px 16px; border: 1.5px solid var(--line); background: var(--tile); border-radius: 10px; font-weight: 700; max-width: 100%; overflow-wrap: anywhere; }
+.pager button[disabled] { visibility: hidden; }
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; color: var(--soft); font-size: .9rem; }
+footer button { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 360px) { body { font-size: 16px; } .word { font-size: 1.6rem; } .opt { padding: 8px 12px; } }
+.steptext { margin: 0; font-size: 1.15rem; overflow-wrap: anywhere; }
+.en { font-weight: 700; }
+.all { justify-self: start; background: none; border: 0; padding: 4px 0; color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.tile { position: relative; display: grid; justify-items: center; gap: 2px; min-height: 96px; padding: 10px 6px; border: 1.5px solid var(--line); border-bottom-width: 4px; background: var(--tile); border-radius: 14px; font-size: 1.6rem; line-height: 1.2; overflow-wrap: anywhere; transition: transform .08s ease; }
+.tile:active { transform: translateY(2px); }
+.tile .emo { font-size: 2rem; }
+.tile .tw b, .word b, .line b { color: var(--sound); font-weight: 800; }
+.tile.on b, .word.on b, .line.on b { color: var(--on-glow); }
+.tile.on { background: var(--glow); border-color: var(--glow); color: var(--on-glow); }
+.tile.heard::after { content: ""; position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.word.sentence { font-size: 1.35rem; font-weight: 400; text-align: left; }
+@media (max-width: 480px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } nav { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
+</style>
+<style id="blog-look">
+/* Ⓓ English blog look (sajqaliruizamin.blogspot.com/p/reading.html): lavender page, purple hero, white cards with a purple edge */
+:root{--bg:#F7F3FC;--tile:#FFFFFF;--ink:#1F2A44;--soft:#5A6478;--line:#DDD0EE;--mute:#8C93A6;
+  --accent:#6E36A8;--on-accent:#FFFFFF;--glow:#E9DBFB;--on-glow:#1F2A44;--edge:#8A4FC7;
+  --ok:#6E36A8;--okbg:#F1E8FB;--headc:#762C85;--no:#C2413A;--nobg:#FBE6E4;--sound:#C93A22;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;--sans:'Manrope','Segoe UI',system-ui,sans-serif;--mark:'Bodoni Moda','Playfair Display',Georgia,serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141020;--tile:#1F1930;--ink:#E8ECF4;--soft:#A3ADC2;--line:#3A2F52;--mute:#8790A6;
+  --accent:#8B57CF;--on-accent:#FFFFFF;--glow:#3B2C5C;--on-glow:#F1EAFB;--edge:#A877E0;--ok:#C9A6F2;--okbg:#2C2340;--headc:#D9B8FF;--no:#FF8A7A;--nobg:#45262A;--sound:#FF8F76;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141020;--tile:#1F1930;--ink:#E8ECF4;--soft:#A3ADC2;--line:#3A2F52;--mute:#8790A6;
+  --accent:#8B57CF;--on-accent:#FFFFFF;--glow:#3B2C5C;--on-glow:#F1EAFB;--edge:#A877E0;--ok:#C9A6F2;--okbg:#2C2340;--headc:#D9B8FF;--no:#FF8A7A;--nobg:#45262A;--sound:#FF8F76;color-scheme:dark}
+body{-webkit-font-smoothing:antialiased;font-family:var(--sans)}
+.top{display:flex;align-items:center;padding-bottom:12px;border-bottom:4px solid rgba(110,54,168,.08)}
+.brand{display:inline-flex;align-items:center;gap:9px}
+.badge{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#1D3461,#0F1F3D 70%);box-shadow:inset 0 0 0 1.5px #E7B95B;font:italic 700 19px/1 var(--mark);color:#E7B95B}
+.wm{font:600 23px/1 var(--mark);letter-spacing:.02em;color:#13213F}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .wm{color:#F1F4FA}}
+:root[data-theme="dark"] .wm{color:#F1F4FA}
+header{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:stretch}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:24px 22px;border-radius:20px;background:linear-gradient(135deg,#8A4FC7,#5E2A96);box-shadow:0 12px 28px rgba(94,42,150,.25);color:#fff}
+.hero>div{min-width:0}
+.hero .eye{margin:0 0 6px;font:800 13px/1.3 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:#E6D4FF}
+.hero h1{color:#fff;letter-spacing:-.015em;line-height:1.1;text-wrap:balance}
+.hero .lede{color:#F1E8FF;font-family:var(--sans);font-size:15px;margin-top:8px}
+.hero .lede b{color:#fff}
+.hero .ab{width:76px;height:76px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35);color:#fff;font:800 32px/1 var(--display);transform:rotate(-4deg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{background:linear-gradient(135deg,#7440B4,#45207A);box-shadow:0 10px 24px rgba(0,0,0,.35)}}
+:root[data-theme="dark"] .hero{background:linear-gradient(135deg,#7440B4,#45207A);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+@media (max-width:480px){.hero{padding:20px 18px;gap:12px}.hero .ab{width:56px;height:56px;font-size:24px;border-radius:14px}}
+.hero h1{font-size:clamp(22px,8vw,48px)}
+@media (max-width:359px){.hero{padding:16px 14px;border-radius:16px}}
+.pager{flex-wrap:wrap}.pager button{max-width:100%;min-width:0;overflow-wrap:anywhere}.pager #next{margin-left:auto}
+@media (max-width:419px){.hero{grid-template-columns:minmax(0,1fr)}.hero .ab{display:none}}
+h1,h2{font-family:var(--display);font-weight:800}
+h2{letter-spacing:-.01em}
+.speed,.speed span,.pill,nav button,.pager button,footer,.count,.note,.tip,.say,.done,.fb,.num{font-family:var(--sans)}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+nav button{font-family:var(--display);border-color:var(--line)}
+nav button[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+nav button.full::after{color:#E7B95B}
+.tip{background:var(--tile);color:var(--ink);border-left:4px solid var(--edge);border-radius:8px;box-shadow:0 0 0 1px var(--line)}
+.tip b{color:var(--sound)}
+.card{border-left:4px solid var(--edge)}
+.pager button{border-radius:12px}
+.pager button#next{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:800}
+.say{border-radius:12px;font-weight:800}
+footer{border-top:1px solid var(--line);padding-top:14px}
+footer .sig{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--sans)}
+footer .sig b{font:600 16px var(--mark);color:var(--ink)}
+.badge.mini{width:22px;height:22px;font-size:12px;box-shadow:inset 0 0 0 1px #E7B95B}
+.tile,.tw,.word,.line,.opt{font-family:var(--read)}
+.steptext{font-family:var(--sans)}
+.note{border-color:var(--edge)}
+.opt.right,.done{color:var(--ink)}
+.all{color:var(--accent)}
+@media (max-width:359px){.card .word{font-size:1.3rem;padding:4px 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span class="brand" aria-label="Ⓓ English"><span class="badge">D</span><span class="wm">English</span></span></div>
+  <header>
+    <div class="hero"><div>
+      <p class="eye">Learn to Read · 6-qadam</p>
+      <h1>Ortiqcha tovush yoʻq</h1>
+      <p class="lede"><b>six</b> — «sikis» emas, <b>own</b> — «oven» emas! <b>x</b> da «ks» yopishib turadi, <b>ow</b> da «v» yoʻq.</p>
+    </div><span class="ab" aria-hidden="true">x·ow</span>
+    </div>
+    <div class="speed">
+      <span>Tezlik:</span>
+      <button class="pill" id="speed-normal" type="button">Oddiy</button>
+      <button class="pill" id="speed-slow" type="button">Sekin</button>
+      <label for="voice" id="voice-label" hidden>Ovoz:</label>
+      <select id="voice" hidden></select>
+      <button class="pill" id="alt-voice" type="button" aria-pressed="false">🔊 Ovoz chiqmasa, bosing</button>
+    </div>
+  </header>
+
+  <nav id="nav" aria-label="Varaqlar"></nav>
+
+  <p class="note" id="note" hidden>Ovoz eshitilmadi. Telefon ovozini tekshiring. Sozlamalarda ingliz tili uchun “matnni ovozga aylantirish” yoqilgan boʻlishi kerak. Sahifani Google Chrome’da ham ochib koʻring. Yoki yuqoridagi 🔊 tugmasini bosing.</p>
+
+  <main id="sheet" style="display:grid;gap:16px"></main>
+
+  <div class="pager">
+    <button id="prev" type="button">← Oldingi varaq</button>
+    <button id="next" type="button">Keyingi varaq →</button>
+  </div>
+
+  <footer>
+    <span class="sig"><span class="badge mini" aria-hidden="true">D</span><b>English</b> by <b>Mr. Dilshod</b></span>
+    <button id="reset" type="button">Varaqni qaytadan</button>
+  </footer>
+</div>
+
+<script>
+/* Sheet types:
+   steps:  cards to read one by one (the idea and the rule), each can be heard
+   tiles:  words to hear and repeat; the letters to notice are highlighted (hl)
+   listen: the computer says one word of a pair; the student chooses which one
+   choose: a question with three answers; one is right
+   gap:    a sentence with a blank; the student picks the right word
+   lines:  sentences: listen, record yourself, listen to yourself */
+const SHEETS = [
+  { title: "Qoida", type: "steps",
+    tip: "«Keyingisi»ni bosing, oʻqing va tinglang. Har bir soʻzda qoʻlingizni bir marta chapak qiling.",
+    steps: [
+      { big: "🙅 Ortiqcha tovush", text: "Baʼzan soʻzga yoʻq tovushni qoʻshib yuboramiz: <span class='en'>six</span> oʻrniga «sikis», <span class='en'>own</span> oʻrniga «oven». Bugun ortiqcha tovushlarni olib tashlaymiz!", say: "" },
+      { big: "six 6️⃣", text: "<b>x</b> harfi ikki tovush: <b>k</b> va <b>s</b>, lekin ular <b>yopishib</b> turadi, orasida unli yoʻq. «Siks», «sikis» emas. <span class='en'>six</span> — olti.", say: "six" },
+      { big: "👏 Bitta chapak", text: "Qoʻlingizni chapak qiling: <span class='en'>six</span> — bitta chapak. «Si-kis» desangiz, ikki chapak chiqadi: demak, ortiqcha «i» bor. <span class='en'>box</span>, <span class='en'>fox</span>, <span class='en'>Twix</span> — hammasi bitta chapak.", say: "box" },
+      { big: "Twix 🍫", text: "Soʻz boshidagi <b>tw</b> ham yopishib turadi: <b>t</b> dan keyin darrov <b>w</b>. «Tuviks» ham, «tvikis» ham emas: <span class='en'>Twix</span>, <span class='en'>twelve</span> — oʻn ikki, <span class='en'>twin</span> — egizak.", say: "Twix" },
+      { big: "👄 W ≠ V", text: "<b>w</b> «v» emas! «V» da tish labga tegadi. <b>w</b> da tish tegmaydi: lablar «u» deyotgandek yumaloq boʻladi, keyin ochiladi: <span class='en'>window</span> — deraza, <span class='en'>we</span> — biz.", say: "window" },
+      { big: "own 🙋", text: "Unlidan keyingi <b>w</b> umuman tovush emas: u unli bilan birga bitta tovush boʻladi. <b>ow</b> bu yerda «ou»: <span class='en'>own</span> — «oun», oʻzimning. «Oven» desangiz, <span class='en'>oven</span> — duxovka boʻlib qoladi 😄", say: "own" },
+      { big: "brown 🟤", text: "<b>ow</b> baʼzan «au» boʻladi: <span class='en'>brown</span> — «braun», jigarrang. «Braven» emas! <span class='en'>cow</span> — sigir, <span class='en'>now</span> — hozir, <span class='en'>down</span> — pastga.", say: "brown" },
+      { big: "«ou» yoki «au»?", text: "«ou»: <span class='en'>own, snow, slow, show, yellow, window</span>. «au»: <span class='en'>brown, cow, now, how, down, town</span>. Qatʼiy qoida yoʻq: tinglang va eslab qoling. Lekin ikkalasida ham <b>v</b> yoʻq!", say: "" }
+    ] },
+  { title: "Eshit va takrorla", type: "tiles",
+    tip: "Soʻzni bosing, tinglang va ovoz chiqarib takrorlang. Rangli harflarga eʼtibor bering: x — «ks» birga, ow — bitta unli, «v» siz.",
+    words: [["six","6️⃣","x"],["box","📦","x"],["fox","🦊","x"],["taxi","🚕","x"],["Twix","🍫","Tw"],["next","➡️","x"],["own","🙋","ow"],["snow","❄️","ow"],["yellow","💛","ow"],["brown","🟤","ow"],["cow","🐄","ow"],["down","⬇️","ow"]] },
+  { title: "Qaysi soʻz?", type: "listen",
+    tip: "Tugmani bosing va tinglang. Qaysi soʻzni eshitdingiz? Xato boʻlsa, yana tinglab qayta tanlang.",
+    items: [
+      { pair: ["own 🙋", "oven 🔥"], say: 0, why: "<b>own</b> — oʻzimning, «oun», bitta boʻgʻin. <b>oven</b> — duxovka, ikki boʻgʻin va «v»." },
+      { pair: ["six 6️⃣", "sick 🤒"], say: 0, why: "<b>six</b> — olti, oxirida «ks». <b>sick</b> — kasal, oxirida faqat «k»." },
+      { pair: ["vest 🦺", "west 🧭"], say: 1, why: "<b>west</b> — gʻarb, lablar yumaloq, tish tegmaydi. <b>vest</b> — jilet, tish labga tegadi." },
+      { pair: ["wet 💦", "vet 🩺"], say: 0, why: "<b>wet</b> — hoʻl. <b>vet</b> — veterinar, «v» bilan." },
+      { pair: ["no 🙅", "now ⏰"], say: 1, why: "<b>now</b> — hozir, «au». <b>no</b> — yoʻq, «ou»." },
+      { pair: ["box 📦", "books 📚"], say: 0, why: "<b>box</b> — quti, qisqa «o» va «ks». <b>books</b> — kitoblar." }
+    ] },
+  { title: "Nechta chapak?", type: "choose",
+    tip: "Savolni oʻqing, soʻzni ovoz chiqarib ayting va chapak qiling. Toʻgʻri javobni tanlang.",
+    items: [
+      { q: "six — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>six</b> — bitta chapak: «siks». «Si-kis» — ikki chapak, bu xato." },
+      { q: "Twix — nechta chapak?", opts: ["1", "2", "3"], r: "1", why: "<b>Twix</b> — bitta chapak: tw va x yopishib turadi." },
+      { q: "own soʻzida w qanday oʻqiladi?", opts: ["«v» kabi", "o bilan birga «ou»", "«u» va «v» birga"], r: "o bilan birga «ou»", why: "<b>own</b> — «oun». w bu yerda alohida tovush emas." },
+      { q: "Qaysi soʻzda ow «au» deb oʻqiladi?", opts: ["snow", "brown", "yellow"], r: "brown", why: "<b>brown</b> — «braun». <b>snow</b> va <b>yellow</b> da «ou»." },
+      { q: "Qaysi soʻzda ow «ou» deb oʻqiladi?", opts: ["cow", "now", "slow"], r: "slow", why: "<b>slow</b> — «slou», sekin. <b>cow</b> va <b>now</b> da «au»." }
+    ] },
+  { title: "Boʻshliqqa qoʻying", type: "gap",
+    tip: "Gapni oʻqing. Maʼnosiga qaysi soʻz mos keladi? Ustiga bosing.",
+    items: [
+      { s: "I have {*six|sick} pencils.", why: "<b>six</b> — olti. Menda oltita qalam bor. <b>sick</b> — kasal." },
+      { s: "This is my {*own|oven} room.", why: "<b>own</b> — oʻzimning. Bu mening oʻz xonam. <b>oven</b> — duxovka, unda yashamaymiz 😄" },
+      { s: "My dad's car is {*brown|brave}.", why: "<b>brown</b> — jigarrang. Dadamning mashinasi jigarrang. <b>brave</b> — jasur." },
+      { s: "Look! It's {*snowing|knowing}!", why: "<b>snowing</b> — qor yogʻyapti. <b>knowing</b> — bilish." }
+    ] },
+  { title: "Ovoz bilan oʻqing", type: "lines",
+    tip: "Gapni tinglang, keyin 🎙️ ni bosing, ovoz chiqarib oʻqing va oʻzingizni tinglang. x da ortiqcha «i» yoʻq, ow da «v» yoʻq.",
+    lines: ["Six boxes and six foxes.", "I want a Twix now.", "This is my own window.", "The brown cow is slow.", "Snow is white, not yellow!"] }
+];
+
+const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("otv:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("otv:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
+const plainWord = (t) => t.replace(/[^A-Za-z' ,.!?]/g, "").trim();
+
+let slow = store.get("slow", true);
+let results = store.get("results", {});   // "sheet:item" -> true (first try) / false (later try)
+let voices = [], chosen = store.get("voiceV3", ""), current = 0, keep = [], startTimer = null;
+
+function loadVoices() {
+  if (!("speechSynthesis" in window)) return;
+  voices = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang)).sort((a, b) => rank(b) - rank(a));
+  const sel = $("voice"); sel.textContent = "";
+  voices.forEach((v) => { const o = el("option"); o.value = v.name; o.textContent = v.name.replace(/^(Microsoft|Google)\s+/, ""); sel.append(o); });
+  if (chosen && voices.some((v) => v.name === chosen)) sel.value = chosen;
+  paintAlt();
+}
+function rank(v) { return (/^Google/.test(v.name) ? 4 : /Online|Natural/.test(v.name) ? 3 : 0) + (/en[-_]US/i.test(v.lang) ? 2 : 1); }
+/* Some phone browsers have no English voice: then play the words as audio from Google Translate instead. */
+let useAudio = store.get("clips", true), player = null;
+function playAudio(items, gap) {
+  if (player) { player.onended = player.onerror = null; player.pause(); }
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  clearTimeout(startTimer); clearOn();
+  let i = 0;
+  const next = () => {
+    if (i >= items.length) return;
+    const it = items[i++];
+    const a = new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=" + encodeURIComponent(it.text));
+    player = a; a.playbackRate = slow ? 0.7 : 1;
+    a.onplaying = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
+    a.onended = () => { if (it.el) it.el.classList.remove("on"); setTimeout(next, gap || 0); };
+    a.onerror = () => { if (it.el) it.el.classList.remove("on"); if ("speechSynthesis" in window && voices.length) { useAudio = false; paintAlt(); speakBack(items.slice(i - 1)); } else $("note").hidden = false; };
+    const p = a.play(); if (p && p.catch) p.catch(() => { $("note").hidden = false; });
+  };
+  next();
+}
+/* the audio voice could not play (no internet): say the rest with the device's own English voice */
+function speakBack(items) {
+  if (!items.length) return;
+  speechSynthesis.cancel(); keep = [];
+  const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
+  items.forEach((it) => {
+    const u = new SpeechSynthesisUtterance(it.text);
+    u.lang = voice ? voice.lang : "en-US"; if (voice) u.voice = voice;
+    u.rate = slow ? 0.72 : 0.9;
+    u.onstart = () => { $("note").hidden = true; clearOn(); if (it.el) it.el.classList.add("on"); if (it.onstart) it.onstart(); };
+    u.onend = () => { if (it.el) it.el.classList.remove("on"); };
+    keep.push(u); speechSynthesis.speak(u);
+  });
+}
+setTimeout(() => { if (!("speechSynthesis" in window) || !voices.length) { useAudio = true; paintAlt(); } }, 2000);
+function paintAlt() { $("alt-voice").setAttribute("aria-pressed", String(useAudio)); $("alt-voice").hidden = useAudio; const many = voices.length > 1 && !useAudio; $("voice").hidden = $("voice-label").hidden = !many; }
+$("alt-voice").addEventListener("click", () => { useAudio = !useAudio; store.set("clips", useAudio); paintAlt(); if (useAudio) playAudio([{ text: "Hello!" }]); else if ("speechSynthesis" in window) speechSynthesis.cancel(); });
+paintAlt();
+function speak(text, node) {
+  if (!text) return;
+  const conv = [{ text, el: node }];
+  if (useAudio || !("speechSynthesis" in window)) { playAudio(conv); return; }
+  speechSynthesis.cancel(); clearOn();
+  const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
+  clearTimeout(startTimer);
+  startTimer = setTimeout(() => { useAudio = true; playAudio(conv); }, 2500);
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = voice ? voice.lang : "en-US"; if (voice) u.voice = voice;
+  u.rate = slow ? 0.72 : 0.9;
+  u.onstart = () => { clearTimeout(startTimer); $("note").hidden = true; clearOn(); if (node) node.classList.add("on"); };
+  u.onend = () => node && node.classList.remove("on");
+  u.onerror = (e) => { if (node) node.classList.remove("on"); if (e.error !== "canceled" && e.error !== "interrupted") { clearTimeout(startTimer); if (!useAudio) { useAudio = true; playAudio(conv); } } };
+  keep = [u]; speechSynthesis.speak(u);
+}
+function clearOn() { document.querySelectorAll(".on").forEach((n) => n.classList.remove("on")); }
+
+function count(s) { const S = SHEETS[s]; return S.type === "steps" ? S.steps.length : S.type === "tiles" ? S.words.length : S.type === "lines" ? S.lines.length : S.items.length; }
+function key(i) { return current + ":" + i; }
+function save(i, first) { if (!(key(i) in results)) { results[key(i)] = first; store.set("results", results); } updateCount(); paintNav(); }
+function score(s) { const n = count(s); let done = 0, first = 0; for (let i = 0; i < n; i++) { const r = results[s + ":" + i]; if (r !== undefined) { done++; if (r) first++; } } return { n, done, first }; }
+function isQuiz(S) { return S.type === "listen" || S.type === "choose" || S.type === "gap"; }
+function updateCount() {
+  const c = document.querySelector(".count"); if (!c) return;
+  const S = SHEETS[current], { n, done, first } = score(current);
+  const quiz = isQuiz(S);
+  c.textContent = quiz ? "★ " + first + " / " + n + " birinchi urinishda" : done + " / " + n + " tayyor";
+  const fin = $("finish");
+  if (fin) {
+    fin.hidden = done < n;
+    fin.textContent = !quiz ? "🎉 Varaq tugadi! Ortiqcha tovushlar uyiga ketdi. Keyingi varaqqa oʻting."
+      : first === n ? "🏆 Aʼlo! Hammasi birinchi urinishda toʻgʻri. Eshitishingiz zoʻr!"
+      : "✅ Varaq tugadi! Birinchi urinishda: " + n + " tadan " + first + " ta. Yaxshiroq natija kerakmi? Pastdagi «Varaqni qaytadan» tugmasini bosing.";
+  }
+}
+function paintNav() { [...$("nav").children].forEach((b, i) => { const s = score(i); b.classList.toggle("full", s.done === s.n); }); }
+function feedback(card, good, html) {
+  let fb = card.querySelector(".fb"); if (!fb) { fb = el("p", "fb"); card.append(fb); }
+  fb.className = "fb " + (good ? "good" : "bad"); fb.innerHTML = html;
+}
+
+/* the letters to notice: hlWord("saw", "aw") -> s<b>aw</b> */
+function hlWord(w, hl) {
+  const i = w.indexOf(hl);
+  if (i < 0) return w;
+  return w.slice(0, i) + "<b>" + hl + "</b>" + w.slice(i + hl.length);
+}
+
+/* sheet 1: one card at a time */
+function renderSteps(S, box) {
+  let shown = 0;
+  while (shown < S.steps.length && (key(shown) in results)) shown++;
+  const list = el("div", "items"); box.append(list);
+  const more = el("button", "say", "Keyingisi →"); more.type = "button";
+  function add(i) {
+    const st = S.steps[i], card = el("div", "card");
+    const top = el("div", "qrow");
+    const big = el(st.say ? "button" : "span", "word" + (st.say ? "" : " plain"), (st.say ? SPEAKER : "") + "<span></span>");
+    big.lastChild.textContent = st.big;
+    if (st.say) { big.type = "button"; big.setAttribute("aria-label", "Tinglash: " + st.say); big.addEventListener("click", () => speak(st.say, big)); }
+    top.append(big); card.append(top, el("p", "steptext", st.text)); list.append(card);
+    save(i, true);
+  }
+  for (let i = 0; i < Math.max(1, shown); i++) add(i);
+  shown = Math.max(1, shown);
+  more.addEventListener("click", () => { if (shown < S.steps.length) { add(shown++); list.lastChild.scrollIntoView({ behavior: "smooth", block: "center" }); } more.hidden = shown >= S.steps.length; });
+  more.hidden = shown >= S.steps.length;
+  box.append(more);
+}
+
+function renderTiles(S, box, index) {
+  const tiles = el("div", "tiles");
+  S.words.forEach(([w, e, hl], i) => {
+    const b = el("button", "tile"); b.type = "button";
+    b.append(el("span", "emo", e)); const t = el("span", "tw"); t.innerHTML = hlWord(w, hl); b.append(t);
+    b.setAttribute("aria-label", w);
+    if (key(i) in results) b.classList.add("heard");
+    b.addEventListener("click", () => { speak(w, b); b.classList.add("heard"); save(i, true); });
+    tiles.append(b);
+  });
+  const all = el("button", "all", "Hammasini ketma-ket tinglash"); all.type = "button";
+  all.addEventListener("click", () => {
+    const nodes = [...tiles.children]; let k = 0;
+    const next = () => { if (k >= nodes.length || current !== index) return; const n = nodes[k]; const w = S.words[k][0];
+      if (useAudio || !("speechSynthesis" in window)) { playAudio(nodes.slice(k).map((m, j) => ({ text: S.words[k + j][0], el: m, onstart: () => { m.classList.add("heard"); save(k + j, true); } })), 900); return; }
+      speechSynthesis.cancel(); clearOn();
+      const voice = voices.find((v) => v.name === $("voice").value) || voices[0];
+      const u = new SpeechSynthesisUtterance(w); u.lang = voice ? voice.lang : "en-US"; if (voice) u.voice = voice; u.rate = slow ? 0.72 : 0.9;
+      u.onstart = () => { clearOn(); n.classList.add("on", "heard"); save(k, true); };
+      u.onend = () => { n.classList.remove("on"); k++; setTimeout(next, 900); };
+      keep = [u]; speechSynthesis.speak(u); };
+    next();
+  });
+  box.append(all, tiles);
+}
+
+/* one question card with answer buttons; the word can be heard first */
+function answerCard(i, head, opts, rightText, why, onPlay) {
+  const card = el("div", "card");
+  const row = el("div", "qrow"); row.append(el("span", "num", (i + 1) + "."));
+  if (onPlay) {
+    const play = el("button", "word", SPEAKER + "<span></span>"); play.type = "button";
+    play.lastChild.textContent = head.label; play.addEventListener("click", () => onPlay(play));
+    row.append(play);
+  } else {
+    row.append(el("p", "q", head.text));
+  }
+  card.append(row);
+  const box = el("div", "opts"); card.append(box);
+  let tries = 0;
+  const btns = opts.map((t) => {
+    const b = el("button", "opt"); b.type = "button"; b.textContent = t;
+    b.addEventListener("click", () => {
+      if (card.classList.contains("solved")) return;
+      if (t === rightText) { solve(); save(i, tries === 0); }
+      else { tries++; b.classList.add("wrong"); b.disabled = true; feedback(card, false, "Yoʻq, yana tinglab koʻring. Ortiqcha tovush bormi?"); }
+    });
+    box.append(b); return b;
+  });
+  function solve() { card.classList.add("solved"); btns.forEach((b) => { b.disabled = true; if (b.textContent === rightText) b.classList.add("right"); }); feedback(card, true, "👍 " + why); }
+  if (key(i) in results) solve();
+  return card;
+}
+
+function renderListen(S, box) {
+  const items = el("div", "items");
+  S.items.forEach((it, i) => items.append(answerCard(i, { label: "Tinglash" }, it.pair, it.pair[it.say], it.why, (n) => speak(plainWord(it.pair[it.say]), n))));
+  box.append(items);
+}
+
+function renderChoose(S, box) {
+  const items = el("div", "items");
+  S.items.forEach((it, i) => items.append(answerCard(i, { text: it.q }, it.opts, it.r, it.why, null)));
+  box.append(items);
+}
+
+/* the blank is filled with the right word; the sentence is read aloud after it */
+function renderGap(S, box) {
+  const items = el("div", "items");
+  S.items.forEach((item, i) => {
+    const card = el("div", "card");
+    const m = /\{([^}]+)\}/.exec(item.s);
+    const choices = m[1].split("|"), right = choices.find((c) => c[0] === "*").slice(1);
+    const plain = item.s.replace(m[0], right);
+    const row = el("div", "qrow"); row.append(el("span", "num", (i + 1) + "."));
+    const sent = el("p", "sent");
+    sent.append(item.s.slice(0, m.index)); const gap = el("span", "gap", "?"); sent.append(gap, item.s.slice(m.index + m[0].length));
+    row.append(sent); card.append(row);
+    const opts = el("div", "opts"); card.append(opts);
+    let tries = 0;
+    const btns = choices.map((c) => c.replace("*", "")).map((t) => {
+      const b = el("button", "opt"); b.type = "button"; b.textContent = t;
+      b.addEventListener("click", () => {
+        if (card.classList.contains("solved")) return;
+        if (t === right) { solve(); save(i, tries === 0); speak(plain); }
+        else { tries++; b.classList.add("wrong"); b.disabled = true; feedback(card, false, "Yoʻq! Gapni yana oʻqing va maʼnosini oʻylang."); }
+      });
+      opts.append(b); return b;
+    });
+    function solve() {
+      card.classList.add("solved"); gap.textContent = right; gap.classList.add("filled");
+      btns.forEach((b) => { b.disabled = true; if (b.textContent === right) b.classList.add("right"); });
+      feedback(card, true, "👍 " + item.why);
+      if (!card.querySelector(".say")) {
+        const say = el("button", "say", "Gapni tinglash"); say.type = "button";
+        say.addEventListener("click", () => speak(plain, say)); card.append(say);
+      }
+    }
+    if (key(i) in results) solve();
+    items.append(card);
+  });
+  box.append(items);
+}
+
+/* sheet 6: listen, record yourself, listen to yourself (nothing is sent anywhere) */
+let rec = null, recBtn = null;
+function renderLines(S, box) {
+  const items = el("div", "items");
+  S.lines.forEach((line, i) => {
+    const card = el("div", "card");
+    const row = el("div", "qrow"); row.append(el("span", "num", (i + 1) + "."));
+    const lb = el("button", "word sentence", SPEAKER + "<span></span>"); lb.type = "button";
+    lb.lastChild.innerHTML = line.replace(/(x|ow|tw)/gi, "<b>$1</b>");
+    lb.addEventListener("click", () => speak(line, lb));
+    row.append(lb); card.append(row);
+    const ctr = el("div", "opts");
+    const mic = el("button", "say", "🎙️ Oʻzimni yozib olish"); mic.type = "button";
+    const me = el("button", "opt", "▶ Oʻzimni tinglash"); me.type = "button"; me.hidden = true;
+    let url = null;
+    me.addEventListener("click", () => { if (url) new Audio(url).play().catch(() => {}); });
+    mic.addEventListener("click", async () => {
+      if (rec && rec.state === "recording") { rec.stop(); return; }
+      if (!navigator.mediaDevices || !window.MediaRecorder) { feedback(card, false, "Bu yerda yozib olish ishlamaydi. Sahifani Google Chrome’da oching. Hozircha gapni uch marta ovoz chiqarib ayting."); save(i, true); return; }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const chunks = []; rec = new MediaRecorder(stream); recBtn = mic;
+        rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+        rec.onstop = () => {
+          stream.getTracks().forEach((t) => t.stop());
+          if (url) URL.revokeObjectURL(url);
+          url = URL.createObjectURL(new Blob(chunks, { type: rec.mimeType || "audio/webm" }));
+          mic.innerHTML = "🎙️ Qaytadan yozib olish"; mic.classList.remove("rec"); me.hidden = false;
+          new Audio(url).play().catch(() => {});
+          feedback(card, true, "👂 Oʻzingizni tinglang. x da ortiqcha «i» chiqmadimi, ow da «v» eshitilmadimi? Chiqqan boʻlsa, sekinroq qayta yozing.");
+          save(i, true);
+        };
+        rec.start(); mic.innerHTML = "⏹️ Toʻxtatish"; mic.classList.add("rec");
+        setTimeout(() => { if (rec && rec.state === "recording" && recBtn === mic) rec.stop(); }, 15000);
+      } catch (e) { feedback(card, false, "Mikrofonga ruxsat yoʻq. Brauzer sozlamalarida ruxsat bering yoki gapni shunchaki uch marta ovoz chiqarib ayting."); save(i, true); }
+    });
+    ctr.append(mic, me); card.append(ctr);
+    items.append(card);
+  });
+  box.append(items);
+}
+
+function render() {
+  if (rec && rec.state === "recording") rec.stop();
+  const S = SHEETS[current], root = $("sheet");
+  root.textContent = "";
+  const head = el("div", "sheet-head");
+  const h2 = el("h2"); h2.textContent = (current + 1) + ". " + S.title;
+  head.append(h2, el("span", "count")); root.append(head);
+  root.append(el("p", "tip", S.tip));
+  ({ steps: renderSteps, tiles: renderTiles, listen: renderListen, choose: renderChoose, gap: renderGap, lines: renderLines })[S.type](S, root, current);
+  const fin = el("p", "done"); fin.id = "finish"; fin.hidden = true; root.append(fin);
+  [...$("nav").children].forEach((b, i) => { if (i === current) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+  $("prev").disabled = current === 0;
+  $("next").disabled = current === SHEETS.length - 1;
+  updateCount(); paintNav();
+}
+function go(i, scroll) {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  current = i;
+  try { history.replaceState(null, "", "#ws" + (i + 1)); } catch (e) {}
+  render();
+  if (scroll !== false) window.scrollTo(0, 0);
+}
+function fromHash() { const m = /^#ws([1-6])$/.exec(location.hash); return m ? Number(m[1]) - 1 : 0; }
+function paintSpeed() { $("speed-normal").setAttribute("aria-pressed", String(!slow)); $("speed-slow").setAttribute("aria-pressed", String(slow)); }
+
+SHEETS.forEach((s, i) => {
+  const b = el("button"); b.type = "button"; b.textContent = i + 1;
+  b.setAttribute("aria-label", (i + 1) + ". " + s.title); b.title = s.title;
+  b.addEventListener("click", () => go(i, false)); $("nav").append(b);
+});
+$("prev").addEventListener("click", () => go(current - 1));
+$("next").addEventListener("click", () => go(current + 1));
+$("speed-normal").addEventListener("click", () => { slow = false; store.set("slow", slow); paintSpeed(); });
+$("speed-slow").addEventListener("click", () => { slow = true; store.set("slow", slow); paintSpeed(); });
+$("voice").addEventListener("change", (e) => { chosen = e.target.value; store.set("voiceV3", chosen); });
+$("reset").addEventListener("click", () => {
+  Object.keys(results).forEach((k) => { if (k.startsWith(current + ":")) delete results[k]; });
+  store.set("results", results); render();
+});
+if ("speechSynthesis" in window) { loadVoices(); speechSynthesis.addEventListener && speechSynthesis.addEventListener("voiceschanged", loadVoices); }
+paintSpeed();
+current = fromHash();
+render();
+</script>
+<script>/* full screen from the first tap, and again on the next tap if it was left (iPhones have no full screen) */
+(function () { function fs() { var d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
+  if (!f || document.fullscreenElement || document.webkitFullscreenElement) return;
+  try { var r = f.call(d, { navigationUI: "hide" }); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
+  document.addEventListener("click", fs, true); document.addEventListener("keydown", fs, true); })();</script>
+<script>/* an old copy kept by the browser checks for a newer one and swaps itself */
+(function(){try{if(!/^https?:/.test(location.protocol))return;var v=document.querySelector('meta[name="ver"]').content;
+fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=/<meta name="ver" content="([^"]+)"/.exec(t);
+if(m&&m[1]!==v)location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}).catch(function(){})}catch(e){}})();</script>
+</body>
+</html>
