@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8>
-<meta name="ver" content="2026-11-22d"><meta name="referrer" content="no-referrer"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="ver" content="2026-11-24c"><meta name="referrer" content="no-referrer"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>1 qadam: Eshit va takrorla</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,7 +164,7 @@ body{font-family:var(--sans)}
   <div class="top"><span class="brand" aria-label="Ⓓ English"><span class="badge">D</span><span class="wm">English</span></span></div>
   <header>
     <div class="hero"><div>
-      <p class="eye">Learn to Read · 1-qadam</p>
+      <p class="eye"><span style="white-space:nowrap">Learn to Read</span> · <span style="white-space:nowrap">1-qadam</span></p>
       <h1>Eshit va takrorla</h1>
       <p class="lede">Soʻzni bosing, tinglang va ovoz chiqarib takrorlang.</p>
     </div><span class="ab" aria-hidden="true">Aa</span>
@@ -531,4 +531,24 @@ render();
 (function(){try{if(!/^https?:/.test(location.protocol))return;var v=document.querySelector('meta[name="ver"]').content;
 fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=/<meta name="ver" content="([^"]+)"/.exec(t);
 if(m&&m[1]!==v)location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<style>.tile .tw,.tile,.card .word{overflow-wrap:normal;word-break:normal}</style>
+<script>/* big phone text or a narrow phone: a long word gets a little smaller instead of breaking in the middle */
+(function () {
+  var busy = false;
+  function wide(n) { var p = n.parentElement, ps = p && getComputedStyle(p); if (n.scrollWidth > n.clientWidth + 1) return true; if (!p) return false; return n.getBoundingClientRect().right > p.getBoundingClientRect().right - parseFloat(ps.paddingRight) - parseFloat(ps.borderRightWidth) + 1; }
+  function fit() {
+    busy = false;
+    Array.prototype.forEach.call(document.querySelectorAll(".tile, .card .word"), function (n) {
+      if (!n.offsetParent) return;
+      n.style.fontSize = ""; var base = parseFloat(getComputedStyle(n).fontSize), fs = base;
+      while (wide(n) && fs > base * .55) { fs *= .92; n.style.fontSize = fs + "px"; }
+    });
+  }
+  function soon() { if (!busy) { busy = true; requestAnimationFrame(fit); } }
+  window.addEventListener("resize", soon); window.addEventListener("load", soon);
+  if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
+  soon();
+})();</script>
+
 </body></html>

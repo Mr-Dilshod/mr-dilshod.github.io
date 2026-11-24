@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="ver" content="2026-11-22d">
+<meta name="ver" content="2026-11-24c">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
@@ -186,7 +186,7 @@ body{font-family:var(--sans)}
   <div class="top"><span class="brand" aria-label="Ⓓ English"><span class="badge">D</span><span class="wm">English</span></span></div>
   <header>
     <div class="hero"><div>
-      <p class="eye">Learn to Read · Шаг 3</p>
+      <p class="eye"><span style="white-space:nowrap">Learn to Read</span> · <span style="white-space:nowrap">Шаг 3</span></p>
       <h1>Тёплый звук H</h1>
       <p class="lede">Английский <b>h</b> — это не русское «х». Это тёплый выдох: «ха-а-а», как будто вы греете руки.</p>
     </div><span class="ab" aria-hidden="true">Hh</span>
@@ -545,5 +545,25 @@ render();
 (function(){try{if(!/^https?:/.test(location.protocol))return;var v=document.querySelector('meta[name="ver"]').content;
 fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=/<meta name="ver" content="([^"]+)"/.exec(t);
 if(m&&m[1]!==v)location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<style>.tile .tw,.tile,.card .word{overflow-wrap:normal;word-break:normal}</style>
+<script>/* big phone text or a narrow phone: a long word gets a little smaller instead of breaking in the middle */
+(function () {
+  var busy = false;
+  function wide(n) { var p = n.parentElement, ps = p && getComputedStyle(p); if (n.scrollWidth > n.clientWidth + 1) return true; if (!p) return false; return n.getBoundingClientRect().right > p.getBoundingClientRect().right - parseFloat(ps.paddingRight) - parseFloat(ps.borderRightWidth) + 1; }
+  function fit() {
+    busy = false;
+    Array.prototype.forEach.call(document.querySelectorAll(".tile, .card .word"), function (n) {
+      if (!n.offsetParent) return;
+      n.style.fontSize = ""; var base = parseFloat(getComputedStyle(n).fontSize), fs = base;
+      while (wide(n) && fs > base * .55) { fs *= .92; n.style.fontSize = fs + "px"; }
+    });
+  }
+  function soon() { if (!busy) { busy = true; requestAnimationFrame(fit); } }
+  window.addEventListener("resize", soon); window.addEventListener("load", soon);
+  if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
+  soon();
+})();</script>
+
 </body>
 </html>
