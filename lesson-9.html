@@ -468,8 +468,8 @@ function blockPhoto(b, id, scr) {
   /* A photo of notebook or Workbook work goes to the teacher's Drive. */
   var box = el("div", "block"), lab = el("label", "btn photo" + (st.r[id] ? " alt" : "")), inp = el("input"), prev = el("img", "thumb"), line = el("p", "sent");
   inp.type = "file"; inp.accept = "image/*"; inp.id = "photo-" + id.replace(/\W/g, "-");
-  /* on a phone the button opens the camera itself: a fresh photo of the notebook, not a picture from the gallery */
-  if (matchMedia("(pointer: coarse)").matches) inp.setAttribute("capture", "environment");
+  /* no "capture": opening the camera app straight from the lesson made many Android phones close Chrome and lose the photo.
+     Students take the photo or choose it from the gallery; the Check note shows the teacher if it isn't a fresh camera photo. */
   /* homework can take several pages: choose them all at once, or add them one by one */
   var again = b.pages ? "📷 Add another page" : "📷 Take another photo", pages = function () { return +st.r[id + "#"] || (st.r[id] ? 1 : 0); };
   if (b.pages) inp.multiple = true;
